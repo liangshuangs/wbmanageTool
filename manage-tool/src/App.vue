@@ -2,11 +2,11 @@
  * @Anthor: liangshuang15
  * @Description: 
  * @Date: 2022-09-15 15:03:38
- * @LastEditTime: 2022-09-15 15:08:19
+ * @LastEditTime: 2022-09-15 15:15:27
  * @FilePath: /wbmanageTool/manage-tool/src/App.vue
 -->
 <template>
-  <div id="app">
+  <div id="app">y
     <HomeComponent />
   </div>
 </template>
