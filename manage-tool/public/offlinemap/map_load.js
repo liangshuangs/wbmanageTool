@@ -22,5 +22,5 @@ offmapcfg.home = JS__FILE__.substr(0, JS__FILE__.lastIndexOf("/")+1); //地图AP
 (function(){
   window.BMap_loadScriptTime = (new Date).getTime();
   //加载地图API主文件
-  document.write('<script type="text/javascript" src="/static/offlinemap/bmapgl.min.js"></script>');
+  document.write('<script type="text/javascript" src="/offlinemap/bmapgl.min.js"></script>');
 })();
