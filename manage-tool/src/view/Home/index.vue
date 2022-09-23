@@ -2,7 +2,7 @@
  * @Anthor: liangshuang15
  * @Description: 
  * @Date: 2022-09-19 12:21:38
- * @LastEditTime: 2022-09-22 19:12:53
+ * @LastEditTime: 2022-09-23 16:13:55
  * @FilePath: /wbmanageTool/manage-tool/src/view/Home/index.vue
 -->
 <template>
@@ -55,11 +55,8 @@ export default {
       });
     },
     getTuoPu(item, index) {
-      const url = "/web/topology_list";
-      const params = {
-        area: item.id,
-      };
-      fetchService({ url, params }).then((res) => {
+      const url =  `/web/topology_list/${item.id}`;
+      fetchService({ url, params: {} }).then((res) => {
         this.$set(this.tuopuData, index, {name: item.name, data: res.list});
       });
     },

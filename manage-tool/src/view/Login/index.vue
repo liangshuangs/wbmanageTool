@@ -2,7 +2,7 @@
  * @Anthor: liangshuang15
  * @Description: 
  * @Date: 2022-09-22 15:31:38
- * @LastEditTime: 2022-09-22 19:11:05
+ * @LastEditTime: 2022-09-23 15:51:45
  * @FilePath: /wbmanageTool/manage-tool/src/view/Login/index.vue
 -->
 <template>
@@ -38,6 +38,7 @@
 <script>
 import CryptoJS from "crypto-js";
 import { fetchService } from "../../fetch";
+import {setCookie} from '../../util';
 export default {
   name: "LoginCom",
   data() {
@@ -51,30 +52,52 @@ export default {
   methods: {
     // 登陆
     submitForm() {
-      const text = this.getRandomString();
-      const secret = this.getRandomString(this.Form.secret, text);
+      let randomString = this.getRandomString(32);
+      let text = this.getKey(randomString, 32);
+      let pwd = this.getKey(this.Form.secret, 24);
+      console.log("pwd1:",pwd);
+      console.log("text:", text);
+      const secret =this.encryptByDES(text, pwd);
+      console.log('secret:',secret)
       const params = {
-        url: '/web/login',
+        url: "/web/login",
+        method: "post",
         params: {
-            text,
-            secret
-        }
+          text: randomString,
+          secret,
+        },
       };
-      fetchService(params).then(res => {
-        this.$message({
-          message: res.msg || "登陆成功",
-          type: "success",
-        });
+      fetchService(params).then((res) => {
+        // TODO 保存token
+        console.log(res, 'res');
+        setCookie('TOKEN', res.token);
         // 跳转到首页
         this.$router.push('/index/index');
-      })
+      }).catch(err => {
+        this.$message.error(err.message || '登陆失败');
+      });
     },
-    // 重置
-    resetForm(ref) {
-      console.log(ref, "ddd");
+    // 3des加密
+    encryptByDES(message, key) {
+      let keyHex = CryptoJS.enc.Utf8.parse(key);
+      let ivHex = message;
+      let encrypted = CryptoJS.TripleDES.encrypt(ivHex, keyHex, {
+        mode: CryptoJS.mode.ECB,
+        padding: CryptoJS.pad.Pkcs7,
+      });
+      return encrypted.toString();
+    },
+    getKey(key = "", len) {
+      if (key.length < len) {
+        let diffLen = len - key.length;
+        for (let i = 0; i < diffLen; i++) {
+          key += 0;
+        }
+      }
+      return key;
     },
     // 获取随机数
-    getRandomString(len = 10) {
+    getRandomString(len = 24) {
       const string = "ABCDEFGHJKMNPQRSTWXYZabcdefhijkmnprstwxyz@#$%&";
       const maxPos = string.length;
       let randomString = "";
@@ -83,13 +106,9 @@ export default {
       }
       return randomString;
     },
-    encryptByDES(message, key) {
-      let keyHex = CryptoJS.enc.Utf8.parse(key);
-      let encrypted = CryptoJS.DES.encrypt(message, keyHex, {
-        mode: CryptoJS.mode.ECB,
-        padding: CryptoJS.pad.Pkcs7,
-      });
-      return encrypted.toString();
+    // 重置
+    resetForm(ref) {
+      console.log(ref, "ddd");
     },
   },
 };
