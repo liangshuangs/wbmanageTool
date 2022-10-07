@@ -2,7 +2,7 @@
  * @Anthor: liangshuang15
  * @Description: 
  * @Date: 2022-09-19 12:21:38
- * @LastEditTime: 2022-09-23 16:13:55
+ * @LastEditTime: 2022-09-23 16:30:33
  * @FilePath: /wbmanageTool/manage-tool/src/view/Home/index.vue
 -->
 <template>
@@ -26,6 +26,7 @@
 <script>
 import { fetchService } from "../../fetch";
 import Graph from "../../components/Graph.vue";
+import {API} from '../../api';
 export default {
   name: "HomeIndex",
   components: {
@@ -43,7 +44,7 @@ export default {
     // 获取区域
     getMenus() {
       const params = {
-        url: "/web/area_list",
+        url: API.areaList,
       };
       fetchService(params).then((res) => {
         const list = res.list || [];
@@ -51,13 +52,13 @@ export default {
         list.map((item, index) => {
           this.getTuoPu(item, index);
         });
-        this.getTuoPu({ id: "1", name: "海淀" });
       });
     },
     getTuoPu(item, index) {
-      const url =  `/web/topology_list/${item.id}`;
+      const url =  `${API.topologyList}/${item.id}`;
       fetchService({ url, params: {} }).then((res) => {
-        this.$set(this.tuopuData, index, {name: item.name, data: res.list});
+        console.log(res, 'res')
+        this.$set(this.tuopuData, index, {name: item.name, data: res.List});
       });
     },
   },

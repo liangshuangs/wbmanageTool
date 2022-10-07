@@ -2,7 +2,7 @@
  * @Anthor: liangshuang15
  * @Description: 
  * @Date: 2022-09-19 10:29:48
- * @LastEditTime: 2022-09-23 15:58:18
+ * @LastEditTime: 2022-09-23 16:35:48
  * @FilePath: /wbmanageTool/manage-tool/src/components/Layout.vue
 -->
 <template>
@@ -22,7 +22,7 @@
             active-text-color="#ffd04b"
             :router="true"
           >
-            <el-menu-item index="zonglan"  :route="{path: '/index/index'}">
+            <el-menu-item index="zonglan"  :route="{path: '/'}">
               <template slot="title">
                 <i class="el-icon-menu"></i>
                 <span>总览</span>
@@ -31,12 +31,12 @@
             <el-submenu v-for="item in menus" :key="item.name" :index="item.name">
               <template slot="title">{{ item.name }}</template>
               <el-menu-item
-                :route="{path: '/home/tuopu', query: {type: item.id}}"
+                :route="{path: '/tuopu', query: {type: item.id}}"
                 :index="`${item.name}-1`">
                 拓扑
               </el-menu-item>
               <el-menu-item
-                :route="{path: '/home/map', query: {type: item.id}}"
+                :route="{path: '/map', query: {type: item.id}}"
                 :index="`${item.name}-2`">
                 地图</el-menu-item>
             </el-submenu>
@@ -53,6 +53,7 @@
   import { Button } from "element-ui";
   import Setting from './Setting.vue';
   import {fetchService} from '../fetch';
+  import {API} from '../api';
   export default {
     name: "HomeCom",
     props: {
@@ -76,7 +77,7 @@
       // 获取区域
       getMenus() {
         const params = {
-          url: '/web/area_list'
+          url: API.areaList
         }
         fetchService(params).then(res => {
           const list = res.list || [];

@@ -2,7 +2,7 @@
  * @Anthor: liangshuang15
  * @Description: 
  * @Date: 2022-09-22 15:31:38
- * @LastEditTime: 2022-09-23 15:51:45
+ * @LastEditTime: 2022-09-25 09:45:04
  * @FilePath: /wbmanageTool/manage-tool/src/view/Login/index.vue
 -->
 <template>
@@ -36,9 +36,8 @@
   </div>
 </template>
 <script>
-import CryptoJS from "crypto-js";
 import { fetchService } from "../../fetch";
-import {setCookie} from '../../util';
+import {setCookie, getRandomString, encryptByDES, getKey} from '../../util';
 export default {
   name: "LoginCom",
   data() {
@@ -52,13 +51,10 @@ export default {
   methods: {
     // 登陆
     submitForm() {
-      let randomString = this.getRandomString(32);
-      let text = this.getKey(randomString, 32);
-      let pwd = this.getKey(this.Form.secret, 24);
-      console.log("pwd1:",pwd);
-      console.log("text:", text);
-      const secret =this.encryptByDES(text, pwd);
-      console.log('secret:',secret)
+      let randomString = getRandomString(32);
+      let text = getKey(randomString, 32);
+      let pwd = getKey(this.Form.secret, 24);
+      const secret = encryptByDES(text, pwd);
       const params = {
         url: "/web/login",
         method: "post",
@@ -68,43 +64,12 @@ export default {
         },
       };
       fetchService(params).then((res) => {
-        // TODO 保存token
-        console.log(res, 'res');
         setCookie('TOKEN', res.token);
         // 跳转到首页
         this.$router.push('/index/index');
       }).catch(err => {
         this.$message.error(err.message || '登陆失败');
       });
-    },
-    // 3des加密
-    encryptByDES(message, key) {
-      let keyHex = CryptoJS.enc.Utf8.parse(key);
-      let ivHex = message;
-      let encrypted = CryptoJS.TripleDES.encrypt(ivHex, keyHex, {
-        mode: CryptoJS.mode.ECB,
-        padding: CryptoJS.pad.Pkcs7,
-      });
-      return encrypted.toString();
-    },
-    getKey(key = "", len) {
-      if (key.length < len) {
-        let diffLen = len - key.length;
-        for (let i = 0; i < diffLen; i++) {
-          key += 0;
-        }
-      }
-      return key;
-    },
-    // 获取随机数
-    getRandomString(len = 24) {
-      const string = "ABCDEFGHJKMNPQRSTWXYZabcdefhijkmnprstwxyz@#$%&";
-      const maxPos = string.length;
-      let randomString = "";
-      for (let i = 0; i < len; i++) {
-        randomString += string.charAt(Math.floor(Math.random() * maxPos));
-      }
-      return randomString;
     },
     // 重置
     resetForm(ref) {

@@ -2,7 +2,7 @@
  * @Anthor: liangshuang15
  * @Description: 
  * @Date: 2022-09-20 15:30:06
- * @LastEditTime: 2022-09-22 19:58:23
+ * @LastEditTime: 2022-09-28 10:46:28
  * @FilePath: /wbmanageTool/manage-tool/src/components/Setting.vue
 -->
 <template>
@@ -65,32 +65,26 @@
         </div>
         <el-form :model="form2" :rules="rules" ref="form2" v-else>
           <el-form-item
-            label="用户名"
-            :label-width="formLabelWidth"
-            prop="text"
-          >
-            <el-input v-model="form2.text"></el-input>
-          </el-form-item>
-          <el-form-item
             label="原始密码"
+            type="password"
             :label-width="formLabelWidth"
             prop="secret"
           >
             <el-input
               placeholder="请输入原始密码"
-              show-password
+              type="password"
               v-model="form2.secret"
             ></el-input>
           </el-form-item>
           <el-form-item
             label="新密码"
             :label-width="formLabelWidth"
-            prop="new_secret"
+            prop="pwd"
           >
             <el-input
               placeholder="请输入新密码"
               show-password
-              v-model="form2.new_secret"
+              v-model="form2.pwd"
             ></el-input>
           </el-form-item>
           <el-form-item class="submit-wrapper">
@@ -106,6 +100,8 @@
 </template>
 <script>
 import { fetchService } from "../fetch";
+import { API } from "../api";
+import { getRandomString, encryptByDES, getKey } from '../util';
 export default {
   name: "SettingCom",
   props: {
@@ -116,19 +112,19 @@ export default {
   },
   data() {
     return {
+      pwd: "",
       dialogFormVisible: false,
       formLabelWidth: "120px",
       showPointSetting: false,
       form2: {
-        text: "",
         secret: "",
-        new_secret: "",
+        pwd: "",
       },
       rules: {
         secret: [
           { required: true, message: "请输入原始密码", trigger: "blur" },
         ],
-        new_secret: [
+        pwd: [
           { required: true, message: "请输入新密码", trigger: "blur" },
         ],
       },
@@ -156,16 +152,27 @@ export default {
       let url = "/web/pwd";
       this.$refs[formName].validate((valid) => {
         if (valid) {
+          let randomString = getRandomString(32);
+          let text = getKey(randomString, 32); // 随机字符串
+          let secret = getKey(this.form2.secret, 24); // 旧密码
+          
           const params = {
             url,
-            params: this.form2,
+            method: 'PUT',
+            params: {
+              text: randomString,
+              secret: encryptByDES(text, secret), // 旧密码
+              pwd: encryptByDES(this.form2.pwd, secret) // 新密码
+            },
           };
-          fetchService(params).then((res) => {
-            this.$message({
-              message: res.msg || "修改密码成功",
-              type: "success",
+          console.log(params, 'params');
+          fetchService(params)
+            .then((res) => {
+              this.$message.success(res.msg || "修改密码成功");
+            })
+            .catch((err) => {
+              this.$message.error(err.msg || "修改密码失败");
             });
-          });
         } else {
           return false;
         }
@@ -175,29 +182,28 @@ export default {
     resetForm(formName) {
       this.$refs[formName].resetFields();
     },
-    // 删除节点
+    // 删除节点 TODO 删除不成功
     handleDelPoint(index, row) {
       const params = {
-        url: "/web/del",
-        params: {
-          id: row.id,
-        },
+        url: `${API.addArea}/${row.id}`,
+        method: "DELETE",
+        params: {},
       };
       fetchService(params).then((res) => {
-        this.$message({
-          message: res.msg || "删除成功",
-          type: "success",
-        });
+        this.$message.success(res.msg || "删除结点成功");
         this.getPoints(); // 更新列表数据
+      }).catch(err => {
+        this.$message.error(err.msg || '失败')
       });
     },
     // 获取结点数据
     getPoints() {
       const params = {
-        url: "/web/area_list",
+        url: API.areaList,
       };
       fetchService(params).then((res) => {
         this.pointData = res.list || [];
+        this.pwd = res.list[0] && res.list[0].pwd;
       });
     },
     // 编辑节点
@@ -210,22 +216,35 @@ export default {
         }
       });
     },
-    // 保存修改结点
+    // 新增 or 修改 结点
     handleSave(index, row) {
-      const params = {
-        url: "/web/save",
+      let params = {
+        url: API.addArea,
+        method: "post",
         params: {
-          id: row.id,
+          pwd: this.pwd,
           name: row.name,
         },
       };
-      fetchService(params).then((res) => {
-        this.$message({
-          message: res.msg || "修改成功",
-          type: "success",
+      if (row.id) {
+        params = {
+          url: `${API.addArea}/${row.id}`,
+          method: "put",
+          params: {
+            pwd: this.pwd,
+            name: row.name,
+          },
+        };
+      }
+      fetchService(params)
+        .then((res) => {
+          this.$message.success(res.msg || "成功");
+          row.edit = false;
+          this.getPoints(); // 更新列表数据
+        })
+        .catch((err) => {
+          this.$message.error(err.msg || "失败");
         });
-        this.getPoints(); // 更新列表数据
-      });
     },
     // 添加节点
     handleAdd() {

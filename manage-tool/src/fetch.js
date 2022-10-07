@@ -2,7 +2,7 @@
  * @Anthor: liangshuang15
  * @Description: 
  * @Date: 2022-09-19 20:17:58
- * @LastEditTime: 2022-09-23 16:09:49
+ * @LastEditTime: 2022-09-25 09:38:03
  * @FilePath: /wbmanageTool/manage-tool/src/fetch.js
  */
 import axios from 'axios';
@@ -14,7 +14,7 @@ export function fetchService(params) {
   const method = params.method || 'get';
   const token = getCookie('TOKEN');
   axios.defaults.headers.post['Content-Type'] = 'application/json';
-  if (method === 'post') {
+  if (['post','DELETE', 'put'].includes(method)) {
     return axios({
       method,
       headers: {
@@ -23,6 +23,7 @@ export function fetchService(params) {
       url,
       data: data
     }).then((res) => {
+      console.log(res, '---')
       if (res && +res.status === 200) {
         if (res.data && +res.data.code === 0) {
           return Promise.resolve(res.data);
@@ -31,7 +32,7 @@ export function fetchService(params) {
           return;
         }
       }
-      return Promise.reject(res);
+      return Promise.reject(res.data);
     }).catch(err => {
       return Promise.reject(err);
     })
@@ -52,7 +53,7 @@ export function fetchService(params) {
           return;
         }
       }
-      return Promise.reject(res);
+      return Promise.reject(res.data);
     }).catch(err => {
       return Promise.reject(err);
     })
