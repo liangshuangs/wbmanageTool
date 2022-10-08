@@ -2,7 +2,7 @@
  * @Anthor: liangshuang15
  * @Description: 
  * @Date: 2022-09-19 12:21:38
- * @LastEditTime: 2022-09-23 16:30:33
+ * @LastEditTime: 2022-10-07 10:48:39
  * @FilePath: /wbmanageTool/manage-tool/src/view/Home/index.vue
 -->
 <template>
@@ -57,7 +57,6 @@ export default {
     getTuoPu(item, index) {
       const url =  `${API.topologyList}/${item.id}`;
       fetchService({ url, params: {} }).then((res) => {
-        console.log(res, 'res')
         this.$set(this.tuopuData, index, {name: item.name, data: res.List});
       });
     },

@@ -2,7 +2,7 @@
  * @Anthor: liangshuang15
  * @Description: 
  * @Date: 2022-09-23 15:37:34
- * @LastEditTime: 2022-09-28 15:46:19
+ * @LastEditTime: 2022-10-07 23:05:55
  * @FilePath: /wbmanageTool/manage-tool/src/util.js
  */
 import CryptoJS from "crypto-js";
@@ -98,10 +98,8 @@ export class MapInitControl extends window.BMapGL.Control {
 export class RadarOverlay extends window.BMapGL.Overlay {
   constructor(option) {
     super();
-    console.log(option, 'option')
     this.lat = option.lat;
     this.point = option.point;
-    console.log(this.point, 'this.point')
     this.text = option.text;
   }
   initialize(map) {
@@ -109,18 +107,26 @@ export class RadarOverlay extends window.BMapGL.Overlay {
     const div = document.createElement("div");
     this.div = div;
     div.style.position = "absolute";
-    div.style.zIndex = window.BMapGL.Overlay.getZIndex(this.lat);
+    div.style.zIndex = window.BMapGL.Overlay.getZIndex(this.point.lat);
     div.style.color = "white";
-    div.style.height = "40px";
-    div.style.width = "40px";
-    div.style.lineHeight = "40px";
+    div.style.height = "18px";
+    div.style.lineHeight = "18px";
     div.style.whiteSpace = "nowrap";
-    div.style.fontSize = "16px";
-    div.style.fontWeight = "900";
-    div.style.textAlign = 'center';
-    div.style.borderRadius = '50%';
-    div.style.backgroundColor = 'red';
+    div.style.fontSize = "16px"
+    div.style.fontWeight = "900"
     let span = document.createElement("span");
+    // this.div = div;
+    // div.style.position = "absolute";
+    // div.style.zIndex = window.BMapGL.Overlay.getZIndex(this.lat);
+    // div.style.color = "white";
+    // div.style.height = "18px";
+    // div.style.lineHeight = "18px";
+    // div.style.whiteSpace = "nowrap";
+    // div.style.fontSize = "16px";
+    // div.style.fontWeight = "900";
+    // div.style.textAlign = 'center';
+    // div.style.backgroundColor = 'red';
+    // let span = document.createElement("span");
     div.appendChild(span);
     span.appendChild(document.createTextNode(this.text));
     map.getPanes().labelPane.appendChild(div);
@@ -132,8 +138,9 @@ export class RadarOverlay extends window.BMapGL.Overlay {
     this.div.style.left = pixel.x + "px";
     this.div.style.top = pixel.y + "px";
   }
-  setPosition() {
+  setPosition(point) {
     var map = this.map;
+    this.point = point;
     var pixel = map.pointToOverlayPixel(this.point);
     this.div.style.left = pixel.x + "px";
     this.div.style.top = pixel.y - 8 + "px";
