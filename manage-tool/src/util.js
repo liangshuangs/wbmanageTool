@@ -2,7 +2,7 @@
  * @Anthor: liangshuang15
  * @Description: 
  * @Date: 2022-09-23 15:37:34
- * @LastEditTime: 2022-10-07 23:05:55
+ * @LastEditTime: 2022-10-09 10:57:04
  * @FilePath: /wbmanageTool/manage-tool/src/util.js
  */
 import CryptoJS from "crypto-js";
@@ -112,7 +112,7 @@ export class RadarOverlay extends window.BMapGL.Overlay {
     div.style.height = "18px";
     div.style.lineHeight = "18px";
     div.style.whiteSpace = "nowrap";
-    div.style.fontSize = "16px"
+    div.style.fontSize = "12px"
     div.style.fontWeight = "900"
     let span = document.createElement("span");
     // this.div = div;
@@ -136,14 +136,14 @@ export class RadarOverlay extends window.BMapGL.Overlay {
     let map = this.map;
     var pixel = map.pointToOverlayPixel(this.point);
     this.div.style.left = pixel.x + "px";
-    this.div.style.top = pixel.y + "px";
+    this.div.style.top = pixel.y - 7 + "px";
   }
   setPosition(point) {
     var map = this.map;
     this.point = point;
     var pixel = map.pointToOverlayPixel(this.point);
     this.div.style.left = pixel.x + "px";
-    this.div.style.top = pixel.y - 8 + "px";
+    this.div.style.top = pixel.y - 7 + "px";
     this.div.style.transform = "translateX(-50%)";
   }
 

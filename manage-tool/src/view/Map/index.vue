@@ -2,7 +2,7 @@
  * @Anthor: liangshuang15
  * @Description: 
  * @Date: 2022-09-19 14:48:41
- * @LastEditTime: 2022-10-08 13:21:20
+ * @LastEditTime: 2022-10-09 11:06:58
  * @FilePath: /wbmanageTool/manage-tool/src/view/Map/index.vue
 -->
 <template>
@@ -11,7 +11,6 @@
 <script>
 import { MapInitControl, RadarOverlay } from "../../util";
 import { fetchService } from "../../fetch";
-// import Graph from "../../components/Graph.vue";
 import { API } from "../../api";
 let arrow = {
   scale: 0.6,
@@ -23,6 +22,7 @@ export default {
   name: "MapCom",
   data() {
     return {
+      BMapGL: null,
       map: null,
       gps: {
         longitude: 0,
@@ -35,18 +35,39 @@ export default {
     };
   },
   mounted() {
-    this.drawMap();
+    this.initMap();
     this.updateBaseStationMap();
     this.UpdateBaseStationPos();
-    setTimeout(() => {
+    // this.onlineMap();
+    setInterval(() => {
       this.updateBaseStationMap();
       this.UpdateBaseStationPos();
       this.updateBaseStationStatus();
       this.showTopology();
     }, 3000);
+    // setTimeout(() => {
+    //   this.updateBaseStationMap();
+    //   this.UpdateBaseStationPos();
+    //   this.updateBaseStationStatus();
+    //   this.showTopology();
+    // }, 3000);
   },
   methods: {
-    drawMap() {
+    onlineMap() {
+      console.log("dddd");
+      var head = document.getElementsByTagName("head")[0];
+      console.log(head, "head");
+      var script = document.createElement("script");
+      script.type = "text/javascript";
+      script.onload = function () {
+        console.log("onload");
+      };
+      script.src =
+        "https//api.map.baidu.com/api?v=3.0&ak=ibLWiaQA3tf6QUsv6AGUO6GSccxMj2gn";
+      head.appendChild(script);
+    },
+    // 初始化地图
+    initMap() {
       let map = new window.BMapGL.Map("map_container"); // 创建Map实例
       this.map = map;
       //初始化地图,设置中心点坐标和地图级别
@@ -81,8 +102,8 @@ export default {
       this.addMapInitControl(
         240,
         10,
-        { text1: "获取拓扑", text2: "隐藏拓扑" },
-        this.getTouPu
+        { text1: "隐藏拓扑", text2: "显示拓扑" },
+        this.handleTopology
       );
     },
     // 添加自定义控件
@@ -95,15 +116,7 @@ export default {
       });
       this.map.addControl(myMapInitControl);
     },
-    // 添加覆盖物
-    addRadarOverlay(node) {
-      let radarOverlay = new RadarOverlay({
-        lat: node.lat,
-        point: node.point,
-        text: node.name,
-      });
-      this.map.addOverlay(radarOverlay);
-    },
+    // 切换2/3D地图
     handle3D(val) {
       if (val === "2D地图") {
         this.map.setTilt(70);
@@ -111,36 +124,43 @@ export default {
         this.map.setTilt(0);
       }
     },
-    // 获取基站拓扑信息
-    getTouPu(val) {
-      if (val === "获取拓扑") {
+    // 显示隐藏拓扑
+    handleTopology(val) {
+      console.log(val, 'val')
+      if (val === "显示拓扑") {
+        this.isShowTopology = false;
+        this.clearTopology();
         // this.getTuoPuData();
       } else {
+        this.showTopology();
         // this.map.setTilt(0);
       }
     },
     // 更新基站状态
     updateBaseStationStatus() {
       var size = this.map.getSize();
-    var x = size.width - 480;
-    var y = 30;
-    var time = new Date();
-    for (let baseStation of this.baseStationMap.values()) {
-      if (baseStation.marker) {
-        if (baseStation.longitude == 0 || baseStation.latitude == 0) {
-          var pt = this.map.pixelToPoint(new window.BMapGL.Pixel(x, y));
-          baseStation.marker.setPosition(pt);
-          baseStation.customOverlay.setPosition(pt);
-          x -= 80;
+      var x = size.width - 480;
+      var y = 30;
+      var time = new Date();
+      for (let baseStation of this.baseStationMap.values()) {
+        if (baseStation.marker) {
+          if (baseStation.longitude == 0 || baseStation.latitude == 0) {
+            var pt = this.map.pixelToPoint(new window.BMapGL.Pixel(x, y));
+            baseStation.marker.setPosition(pt);
+            baseStation.customOverlay.setPosition(pt);
+            x -= 80;
+          }
+          let img = "assets/base_station_green.png";
+          if (baseStation.time.getTime() + 30000 < time.getTime()) {
+            img = "assets/base_station_red.png";
+          }
+          var icon = new window.BMapGL.Icon(
+            img,
+            new window.BMapGL.Size(35, 35)
+          );
+          baseStation.marker.setIcon(icon);
         }
-        let img = "assets/base_station_green.png";
-        if (baseStation.time.getTime() + 30000 < time.getTime()) {
-          img = "assets/base_station_red.png";
-        }
-        var icon = new window.BMapGL.Icon(img, new window.BMapGL.Size(35, 35));
-        baseStation.marker.setIcon(icon);
       }
-    }
     },
     // 更新基站
     updateBaseStationMap() {
@@ -153,10 +173,10 @@ export default {
         for (let i = 0; i < newBaseStationArray.length; i++) {
           const newBaseStation = newBaseStationArray[i];
           const signalArray = newBaseStation.signals || [];
-            let newSignalMap = new Map();
-            signalArray.map(signal => {
-              newSignalMap.set(signal.mac, signal);
-            });
+          let newSignalMap = new Map();
+          signalArray.map((signal) => {
+            newSignalMap.set(signal.mac, signal);
+          });
           if (this.baseStationMap.has(newBaseStation.mac) === true) {
             const baseStation = this.baseStationMap.get(newBaseStation.mac);
             this.baseStationMap.delete(newBaseStation.mac);
@@ -164,6 +184,9 @@ export default {
             baseStation.name = newBaseStation.name;
             baseStation.ip = newBaseStation.ip;
             baseStation.mac = newBaseStation.mac;
+            for (let signal of baseStation.signalMap.values()) {
+            signal.topology = null;
+          }
             baseStation.signalMap = newSignalMap;
             newBaseStationMap.set(baseStation.mac, baseStation);
           } else {
@@ -180,32 +203,6 @@ export default {
         }
         this.baseStationMap = newBaseStationMap;
       });
-    },
-    // 更新基站信号
-    updateBaseStationSignal(baseStationSignalArray) {
-      console.log(baseStationSignalArray, 'baseStationSignalArray')
-      for (var i = 0; i < baseStationSignalArray.length; i++) {
-        var baseStationSignal = baseStationSignalArray[i];
-        if (this.baseStationMap.has(baseStationSignal.mac) === false) {
-          continue;
-        } else {
-          let newSignalMap = new Map();
-          let baseStation = this.baseStationMap.get(baseStationSignal.mac);
-          console.log(baseStation, 'baseStation')
-          let signalArray = baseStationSignal.signal;
-          for (var j = 0; j < signalArray.length; j++) {
-            var signal = signalArray[j];
-            if (signal.mac == null || signal.mac == "") continue;
-            newSignalMap.set(signal.mac, signal);
-          }
-          for (signal of this.baseStation.signalMap.values()) {
-            signal.topology = null;
-          }
-          baseStation.signalMap.clear();
-          baseStation.signalMap = null;
-          baseStation.signalMap = newSignalMap;
-        }
-      }
     },
     // 更新gps
     UpdateBaseStationPos() {
@@ -234,13 +231,14 @@ export default {
     },
     // 移动基站
     moveBaseStation(baseStation) {
-      const translate = window.BMapGL.Convertor.translate;
-      translate(
-        { lng: baseStation.longitude, lat: baseStation.latitude },
+      const convertor = new window.BMapGL.Convertor();
+      convertor.translate(
+        [new window.BMapGL.Point(baseStation.longitude, baseStation.latitude)],
         1,
+        5,
         function (data) {
-          baseStation.marker.setPosition(data);
-          baseStation.customOverlay.setPosition(data);
+          baseStation.marker.setPosition(data.points[0]);
+          baseStation.customOverlay.setPosition(data.points[0]);
         }
       );
     },
@@ -251,7 +249,7 @@ export default {
       }
       var icon = new window.BMapGL.Icon(
         "assets/base_station_red.png",
-        new window.BMapGL.Size(36, 36)
+        new window.BMapGL.Size(35, 35)
       );
       var marker = new window.BMapGL.Marker(new window.BMapGL.Point(0, 0), {
         icon: icon,
@@ -298,31 +296,27 @@ export default {
     },
     // 显示拓扑信息
     showTopology() {
+      this.clearTopology();
       for (let baseStation1 of this.baseStationMap.values()) {
-        console.log()
         for (let signal of baseStation1.signalMap.values()) {
           for (let baseStation2 of this.baseStationMap.values()) {
             if (signal.mac == baseStation2.mac) {
               if (baseStation1.marker == null || baseStation2.marker == null) {
-                console.log('344')
                 break;
               }
-              console.log(baseStation1, 'baseStation1')
-              console.log(baseStation2, 'baseStation2')
               var point1 = baseStation1.marker.getPosition();
               var point2 = baseStation2.marker.getPosition();
               var pixel1 = this.map.pointToPixel(point1);
               var pixel2 = this.map.pointToPixel(point2);
-              var lngDiff = Math.abs(point1.lng - point2.lng) / 2;
-              var latDiff = Math.abs(point1.lat - point2.lat) / 2;
+              // var lngDiff = Math.abs(point1.lng - point2.lng) / 2;
+              // var latDiff = Math.abs(point1.lat - point2.lat) / 2;
               var xDiff = Math.abs(pixel1.x - pixel2.x) / 2;
               var yDiff = Math.abs(pixel1.y - pixel2.y) / 2;
-              if (point1.lng < point2.lng) point2.lng = point1.lng + lngDiff;
-              else point2.lng = point1.lng - lngDiff;
-              if (point1.lat < point2.lat) point2.lat = point1.lat + latDiff;
-              else point2.lat = point1.lat - latDiff;
+              // if (point1.lng < point2.lng) point2.lng = point1.lng + lngDiff;
+              // else point2.lng = point1.lng - lngDiff;
+              // if (point1.lat < point2.lat) point2.lat = point1.lat + latDiff;
+              // else point2.lat = point1.lat - latDiff;
               var points = [point1, point2];
-              console.log(point1, 'point1')
               var color = "#00FF00";
               if (signal.intensity <= 0 && signal.intensity >= -68)
                 color = "#00FF00";
@@ -356,6 +350,28 @@ export default {
         }
       }
     },
+    clearTopology() {
+      var allOverlay = this.map.getOverlays() || [];
+      for (var i = 0; i < allOverlay.length; i++) {
+        if (allOverlay[i].name != null && allOverlay[i].name == "topology") {
+          this.map.removeOverlay(allOverlay[i]);
+          allOverlay[i] = null;
+        } else if (typeof allOverlay[i].getIcon == "function") {
+          if (
+            allOverlay[i].getIcon() != null &&
+            allOverlay[i].getIcon().name == "topology"
+          ) {
+            this.map.removeOverlay(allOverlay[i]);
+            allOverlay[i] = null;
+          }
+        }
+      }
+      for (let baseStation1 of this.baseStationMap.values()) {
+        for (let signal of baseStation1.signalMap.values()) {
+          signal.topology = null;
+        }
+      }
+    },
     // 设置中心位置
     setCenter(longitude, latitude, converted) {
       if (longitude == 0 || latitude == 0) {
@@ -363,10 +379,16 @@ export default {
       }
       if (converted == true) {
         const _this = this;
-        const translate = window.BMapGL.Convertor.translate;
-        translate({ lng: longitude, lat: latitude }, 1, function (data) {
-          _this.map.setCenter(data);
-        });
+
+        const convertor = new window.BMapGL.Convertor();
+        convertor.translate(
+          [new window.BMapGL.Point(longitude, latitude)],
+          1,
+          5,
+          function (data) {
+            _this.map.setCenter(data.points[0]);
+          }
+        );
       } else {
         this.map.setCenter(new window.BMapGL.Point(longitude, latitude));
       }
