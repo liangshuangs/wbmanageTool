@@ -42,6 +42,10 @@
       min-height: 50px;
     }
 
+    .infoBoxContent .list:hover {
+      color: blue;
+    }
+
     .infoBoxContent .list ul {
       margin: 0;
       padding: 2px;
@@ -82,7 +86,6 @@
   map.enableScrollWheelZoom(true);
   var navi3DCtrl = new BMapGL.NavigationControl3D();
   map.addControl(navi3DCtrl);
-  // showInfoBox();
 
   var gps = {};
   gps.longitude = 0;
@@ -96,11 +99,13 @@
 
   map.addEventListener('moveend', function () {
     for (baseStation of baseStationMap.values()) {
+      if (baseStation.infoBox) {
+        baseStation.infoBox.close();
+      }
       if (baseStation.marker &&
         (baseStation.longitude != 0 && baseStation.latitude != 0)) {
         var point = baseStation.marker.getPosition();
         baseStation.customOverlay.setPosition(point);
-        infoBox.close(baseStation.marker);
       }
     }
     updateBaseStationStatus();
@@ -108,25 +113,21 @@
 
   map.addEventListener('zoomend', function () {
     for (baseStation of baseStationMap.values()) {
+      if (baseStation.infoBox) {
+        baseStation.infoBox.close();
+      }
       if (baseStation.marker &&
         (baseStation.longitude != 0 && baseStation.latitude != 0)) {
         var point = baseStation.marker.getPosition();
         baseStation.customOverlay.setPosition(point);
-        infoBox.close(baseStation.marker);
       }
     }
     updateBaseStationStatus();
   });
 
   map.addEventListener('mousedown', (e) => {
-    console.log(e, 'eeee')
-    if (e.overlay) {
-    } else {
-      for (baseStation of baseStationMap.values()) {
-      if (baseStation.marker) {
-        infoBox.close(baseStation.marker);
-      }
-    }
+    if (!e.overlay) {
+      closeInfoBox();
     }
   })
 
@@ -371,8 +372,6 @@
       gps.converted = false;
     });
     marker.addEventListener('mousedown', function (e) {
-      // infoBox.open(marker);
-      // console.log(e, 'marker')
       setContextMenu(baseStation);
     });
   }
@@ -394,8 +393,8 @@
     if (baseStation.marker == null) {
       return;
     }
-    if (baseStation.menu) {
-      baseStation.marker.removeContextMenu(baseStation.menu);
+    if (baseStation.infoBox) {
+      baseStation.infoBox.close();
       baseStation.menu = null;
     }
     map.removeOverlay(baseStation.marker);
@@ -407,21 +406,28 @@
     }
   }
 
+  function closeInfoBox() {
+    for (baseStation of baseStationMap.values()) {
+        if (baseStation.infoBox) {
+          baseStation.infoBox.close();
+        }
+      }
+      for (morker of imageMap.values()) {
+        if (morker.infoBox) {
+          morker.infoBox.close();
+        }
+      }
+  }
+
   // 设置基站右键菜单
   function setContextMenu(baseStation) {
-    if (baseStation.menu != null && baseStation.infoBox) {
-      baseStation.infoBox.close(baseStation.marker);
-      baseStation.menu = null;
-      baseStation.infoBox = null;
-    }
-    // <li><div class='left'>节点2</div></li>
+    closeInfoBox();
     var showMenu = false;
-    var menu = new BMapGL.ContextMenu();
     let htmlText = [];
     for (monitor of monitorMap.values()) {
       if (monitor.baseStationId == baseStation.id) {
         showMenu = true;
-        htmlText.push(`<li><div class='left'>${monitor.name}</div></li>`)
+        htmlText.push(`<li><div class='left' onclick="handleOpenVideo(monitor, baseStation)">${monitor.name}</div></li>`)
         // menu.addItem(new BMapGL.MenuItem(monitor.name,
         //   function (id) {
         //     return function () {
@@ -430,17 +436,21 @@
         //   }(monitor.id), 100));
       }
     }
-    // if (showMenu) {
-    //   menu.addSeparator();
-    // }
+    htmlText.push(`<li><div class='left' onclick="handleShowTrackDialog(baseStation)">轨迹</div></li>`);
     showMenu = true;
-    menu.addItem(new BMapGL.MenuItem("轨迹", function () {
-      window.showTrackDialog(baseStation.ip, baseStation.name);
-    }, 100));
     if (showMenu) {
-      map.addContextMenu(menu);
-      baseStation.menu = menu;
+      showInfoBox(baseStation, htmlText);
     }
+  }
+
+  function handleOpenVideo(monitor, baseStation) {
+    window.openVideo(monitor.id);
+    baseStation.infoBox && baseStation.infoBox.close();
+  }
+
+  function handleShowTrackDialog (baseStation) {
+    window.showTrackDialog(baseStation.ip, baseStation.name);
+    baseStation.infoBox && baseStation.infoBox.close();
   }
 
   // 更新监控
@@ -484,6 +494,7 @@
     div.style.backgroundColor = "white";
     div.style.userSelect = "none";
     div.onclick = function (e) {
+      closeInfoBox();
       isShowTopology = !isShowTopology;
       if (isShowTopology) {
         text.nodeValue = '隐藏拓扑';
@@ -515,6 +526,7 @@
     div.style.backgroundColor = "white";
     div.style.userSelect = "none";
     div.onclick = function (e) {
+      closeInfoBox();
       if (trackPolyline != null) {
         map.removeOverlay(trackPolyline);
         removeOverlay = null;
@@ -542,6 +554,7 @@
     div.style.backgroundColor = "white";
     div.style.userSelect = "none";
     div.onclick = function (e) {
+      closeInfoBox();
       window.addImage();
     }
     map.getContainer().appendChild(div);
@@ -566,6 +579,7 @@
     div.style.backgroundColor = "white";
     div.style.userSelect = "none";
     div.onclick = function (e) {
+      closeInfoBox();
       setCenter(gps.longitude, gps.latitude, gps.converted);
     }
     map.getContainer().appendChild(div);
@@ -590,6 +604,7 @@
     div.style.backgroundColor = "white";
     div.style.userSelect = "none";
     div.onclick = function (e) {
+      closeInfoBox();
       openDistanceTool();
     }
     map.getContainer().appendChild(div);
@@ -606,6 +621,12 @@
 
   // 添加图片到地图
   var imageMap = new Map();
+
+  function handleDelImgIconFromMap () {
+    imageMap.delete(marker);
+    map.removeOverlay(marker);
+  }
+
   function addImageToMap(url, width, height) {
     var icon = new BMapGL.Icon(url, new BMapGL.Size(width, height));
     var marker = new BMapGL.Marker(map.getCenter(), {
@@ -614,15 +635,12 @@
     });
     marker.menu = null;
     marker.addEventListener('a a asedown', function () {
-      if (marker.menu) {
-        marker.removeContextMenu(marker.menu);
+      if (marker.infoBox) {
+        marker.infoBox.close();
       }
-      marker.menu = new BMapGL.ContextMenu();
-      marker.menu.addItem(new BMapGL.MenuItem("删除图标", function () {
-        imageMap.delete(marker);
-        map.removeOverlay(marker);
-      }, 100));
-      marker.addContextMenu(marker.menu);
+      var htmlText = [];
+      htmlText.push(`<li><div class='left' onclick="handleDelImgIconFromMap(imageMap)">删除图标</div></li>`);
+      showInfoBox(marker, htmlText);
     });
     imageMap.set(marker, marker);
     map.addOverlay(marker);
@@ -771,7 +789,6 @@
     var html = ["<div class='infoBoxContent'><div class='list'><ul>"];
       html = html.concat(htmlText);
     html.push("</ul></div>", "</div>");
-    console.log(html, 'html')
     infoBox = new BMapGLLib.InfoBox(map, html.join(""), {
       boxStyle: {
         background: "#fff",
@@ -799,12 +816,12 @@
     }
     window.showInfo(attributes + methods);
   }
-  var updateBaseStationSignalJson = '[{"id":10952001,"num":"1","name":"节点1","ip":"192.168.1.1","mac":"01:01:01:01:01:01","signalArray":[{"mac":"01:01:01:01:01:02","intensity":-95},{"mac":"01:01:01:01:01:03","intensity":-95}]},{"id":72,"num":"2","name":"节点2","ip":"192.168.1.2","mac":"01:01:01:01:01:02","signalArray":[{"mac":"01:01:01:01:01:01","intensity":-33},{"mac":"01:01:01:01:01:03","intensity":-33}]},{"id":22,"num":"3","name":"节点3","ip":"192.168.1.3","mac":"01:01:01:01:01:03","signalArray":[{"mac":"01:01:01:01:01:01","intensity":-33},{"mac":"01:01:01:01:01:02","intensity":-33}]}]';
-  var updateBaseStationMapJson = '[{"id":10952001,"num":"1","name":"节点1","ip":"192.168.1.1","mac":"01:01:01:01:01:01"},{"id":72,"num":"2","name":"节点2","ip":"192.168.1.2","mac":"01:01:01:01:01:02"},{"id":22,"num":"3","name":"节点3","ip":"192.168.1.3","mac":"01:01:01:01:01:03"}]'
-  updateBaseStationMap(updateBaseStationMapJson);
+  // var updateBaseStationSignalJson = '[{"id":10952001,"num":"1","name":"节点1","ip":"192.168.1.1","mac":"01:01:01:01:01:01","signalArray":[{"mac":"01:01:01:01:01:02","intensity":-95},{"mac":"01:01:01:01:01:03","intensity":-95}]},{"id":72,"num":"2","name":"节点2","ip":"192.168.1.2","mac":"01:01:01:01:01:02","signalArray":[{"mac":"01:01:01:01:01:01","intensity":-33},{"mac":"01:01:01:01:01:03","intensity":-33}]},{"id":22,"num":"3","name":"节点3","ip":"192.168.1.3","mac":"01:01:01:01:01:03","signalArray":[{"mac":"01:01:01:01:01:01","intensity":-33},{"mac":"01:01:01:01:01:02","intensity":-33}]}]';
+  // var updateBaseStationMapJson = '[{"id":10952001,"num":"1","name":"节点1","ip":"192.168.1.1","mac":"01:01:01:01:01:01"},{"id":72,"num":"2","name":"节点2","ip":"192.168.1.2","mac":"01:01:01:01:01:02"},{"id":22,"num":"3","name":"节点3","ip":"192.168.1.3","mac":"01:01:01:01:01:03"}]'
+  // updateBaseStationMap(updateBaseStationMapJson);
   var timer = setInterval(function () {
-    updateBaseStationSignal(updateBaseStationSignalJson);
-    UpdateBaseStationPos(10952001, 116.41000000022, 39.96030079556);
+    // updateBaseStationSignal(updateBaseStationSignalJson);
+    // UpdateBaseStationPos(10952001, 116.41000000022, 39.96030079556);
     for (baseStation of baseStationMap.values()) {
       if (baseStation.marker &&
         (baseStation.longitude != 0 && baseStation.latitude != 0)) {
