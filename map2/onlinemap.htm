@@ -65,7 +65,7 @@
     src="//api.map.baidu.com/api?type=webgl&v=1.0&ak=ibLWiaQA3tf6QUsv6AGUO6GSccxMj2gn"></script>
   <script type="text/javascript"
     src="http://api.map.baidu.com/library/DistanceTool/1.2/src/DistanceTool_min.js"></script>
-    <script type="text/javascript" src="http://api.map.baidu.com/api?v=3.0&ak=ibLWiaQA3tf6QUsv6AGUO6GSccxMj2gn"></script>
+    <!-- <script type="text/javascript" src="http://api.map.baidu.com/api?v=3.0&ak=ibLWiaQA3tf6QUsv6AGUO6GSccxMj2gn"></script> -->
   <link href="//mapopen.bj.bcebos.com/github/BMapGLLib/InfoBox/src/InfoBox.js" rel="stylesheet">
   <script src="//mapopen.bj.bcebos.com/github/BMapGLLib/InfoBox/src/InfoBox.js"></script>
   <script type="text/javascript">
@@ -292,7 +292,6 @@
   function ComplexCustomOverlay(point, text) {
     this.point = point;
     this.text = text + "";
-
   }
   ComplexCustomOverlay.prototype = new BMapGL.Overlay();
   ComplexCustomOverlay.prototype.initialize = function (map) {
