@@ -2,8 +2,8 @@
  * @Anthor: liangshuang15
  * @Description: 
  * @Date: 2022-09-28 16:16:13
- * @LastEditTime: 2022-10-10 18:41:03
- * @FilePath: /wbmanageTool/manage-tool/public/offlinemap/tools/convertor.js
+ * @LastEditTime: 2022-10-11 10:42:10
+ * @FilePath: /wbmanageTool/map2/js/convertor.js
  */
 //2011-7-25
 (function(){        //闭包
@@ -28,14 +28,15 @@
     }
     function translate(point,from, to, callback){
         var callbackName = 'cbk_' + Math.round(Math.random() * 10000);    //随机函数名
-        // var xyUrl = "http://api.map.baidu.com/ag/coord/convert?from="+ type + "&to=5&x=" + point.lng + "&y=" + point.lat + "&callback=window.BMapGL.Convertor." + callbackName;
-        var xyUrl = `https://api.map.baidu.com/geoconv/v1/?coords=${point.lng},${point.lat}&from=${from}&to=${to}&ak=ibLWiaQA3tf6QUsv6AGUO6GSccxMj2gn&callback=${window.BMapGL.Convertor.callbackName}`;
-        console.log(xyUrl, 'xyUrl')
+        var callbackName = 'cbk_' + Math.round(Math.random() * 10000);    //随机函数名
+        // var xyUrl = "http://api.map.baidu.com/ag/coord/convert?from="+ type + "&to=5&x=" + point.lng + "&y=" + point.lat + "&callback=BMap.Convertor." + callbackName;
+        // var xyUrl =  `http://api.map.baidu.com/ag/coord/convert?from=${from}&to=${to}&x=${point[0].lng}&y=${point[0].lat}&callback=window.BMapGL.Convertor.`+callbackName;
+        var xyUrl = `https://api.map.baidu.com/geoconv/v1/?coords=${point[0].lng},${point[0].lat}&from=${from}&to=${to}&ak=ibLWiaQA3tf6QUsv6AGUO6GSccxMj2gn&callback=window.BMapGL.Convertor.`+ callbackName;
         //动态创建script标签
         load_script(xyUrl);
         window.BMapGL.Convertor[callbackName] = function(xyResult){
             delete window.BMapGL.Convertor[callbackName];    //调用完需要删除改函数
-            var point = new window.BMapGL.Point(xyResult.x, xyResult.y);
+            var point = new window.BMapGL.Point(xyResult.result[0].x, xyResult.result[0].y);
             callback && callback(point);
         }
     }

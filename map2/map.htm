@@ -65,7 +65,6 @@
     src="//api.map.baidu.com/api?type=webgl&v=1.0&ak=ibLWiaQA3tf6QUsv6AGUO6GSccxMj2gn"></script>
   <script type="text/javascript"
     src="http://api.map.baidu.com/library/DistanceTool/1.2/src/DistanceTool_min.js"></script>
-    <script type="text/javascript" src="http://api.map.baidu.com/api?v=3.0&ak=ibLWiaQA3tf6QUsv6AGUO6GSccxMj2gn"></script>
   <link href="//mapopen.bj.bcebos.com/github/BMapGLLib/InfoBox/src/InfoBox.js" rel="stylesheet">
   <script src="//mapopen.bj.bcebos.com/github/BMapGLLib/InfoBox/src/InfoBox.js"></script>
   <script type="text/javascript">
@@ -816,12 +815,12 @@
     }
     window.showInfo(attributes + methods);
   }
-  // var updateBaseStationSignalJson = '[{"id":10952001,"num":"1","name":"节点1","ip":"192.168.1.1","mac":"01:01:01:01:01:01","signalArray":[{"mac":"01:01:01:01:01:02","intensity":-95},{"mac":"01:01:01:01:01:03","intensity":-95}]},{"id":72,"num":"2","name":"节点2","ip":"192.168.1.2","mac":"01:01:01:01:01:02","signalArray":[{"mac":"01:01:01:01:01:01","intensity":-33},{"mac":"01:01:01:01:01:03","intensity":-33}]},{"id":22,"num":"3","name":"节点3","ip":"192.168.1.3","mac":"01:01:01:01:01:03","signalArray":[{"mac":"01:01:01:01:01:01","intensity":-33},{"mac":"01:01:01:01:01:02","intensity":-33}]}]';
-  // var updateBaseStationMapJson = '[{"id":10952001,"num":"1","name":"节点1","ip":"192.168.1.1","mac":"01:01:01:01:01:01"},{"id":72,"num":"2","name":"节点2","ip":"192.168.1.2","mac":"01:01:01:01:01:02"},{"id":22,"num":"3","name":"节点3","ip":"192.168.1.3","mac":"01:01:01:01:01:03"}]'
-  // updateBaseStationMap(updateBaseStationMapJson);
+  var updateBaseStationSignalJson = '[{"id":10952001,"num":"1","name":"节点1","ip":"192.168.1.1","mac":"01:01:01:01:01:01","signalArray":[{"mac":"01:01:01:01:01:02","intensity":-95},{"mac":"01:01:01:01:01:03","intensity":-95}]},{"id":72,"num":"2","name":"节点2","ip":"192.168.1.2","mac":"01:01:01:01:01:02","signalArray":[{"mac":"01:01:01:01:01:01","intensity":-33},{"mac":"01:01:01:01:01:03","intensity":-33}]},{"id":22,"num":"3","name":"节点3","ip":"192.168.1.3","mac":"01:01:01:01:01:03","signalArray":[{"mac":"01:01:01:01:01:01","intensity":-33},{"mac":"01:01:01:01:01:02","intensity":-33}]}]';
+  var updateBaseStationMapJson = '[{"id":10952001,"num":"1","name":"节点1","ip":"192.168.1.1","mac":"01:01:01:01:01:01"},{"id":72,"num":"2","name":"节点2","ip":"192.168.1.2","mac":"01:01:01:01:01:02"},{"id":22,"num":"3","name":"节点3","ip":"192.168.1.3","mac":"01:01:01:01:01:03"}]'
+  updateBaseStationMap(updateBaseStationMapJson);
   var timer = setInterval(function () {
-    // updateBaseStationSignal(updateBaseStationSignalJson);
-    // UpdateBaseStationPos(10952001, 116.41000000022, 39.96030079556);
+    updateBaseStationSignal(updateBaseStationSignalJson);
+    UpdateBaseStationPos(10952001, 116.41000000022, 39.96030079556);
     for (baseStation of baseStationMap.values()) {
       if (baseStation.marker &&
         (baseStation.longitude != 0 && baseStation.latitude != 0)) {
