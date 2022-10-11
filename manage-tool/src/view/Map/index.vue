@@ -2,7 +2,7 @@
  * @Anthor: liangshuang15
  * @Description: 
  * @Date: 2022-10-11 11:34:47
- * @LastEditTime: 2022-10-11 19:48:26
+ * @LastEditTime: 2022-10-11 20:30:55
  * @FilePath: /wbmanageTool/manage-tool/src/view/Map/index.vue
 -->
 <template>
@@ -38,13 +38,14 @@ export default {
     };
   },
   components: {
-    OnlineMap,
-    offlineMap
+    offlineMap,
+    OnlineMap
   },
   mounted() {},
   methods: {
     // 设置地图离线在线模式
     handleMapType() {
+        window.BMapGL = null;
         this.mapOnlineType = !this.mapOnlineType;
     },
     handleGuiji() {

@@ -2,8 +2,8 @@
  * @Anthor: liangshuang15
  * @Description: 
  * @Date: 2022-10-11 11:50:18
- * @LastEditTime: 2022-10-11 20:32:50
- * @FilePath: /wbmanageTool/manage-tool/src/view/Map/onlineMap.vue
+ * @LastEditTime: 2022-10-11 20:33:54
+ * @FilePath: /wbmanageTool/manage-tool/src/view/Map/offlineMap.vue
 -->
 <template>
   <div id="map_container"></div>
@@ -44,29 +44,29 @@ export default {
   },
   created() {},
   mounted() {
-    dynamicLoadScript(
-      "//api.map.baidu.com/api?type=webgl&v=1.0&ak=ibLWiaQA3tf6QUsv6AGUO6GSccxMj2gn&callback=initialize"
-    );
-    window.initialize = () => {
-      this.initialize();
-      this.updateBaseStationMap();
-      this.getGPS();
-      this.timer = setInterval(() => {
-        for (let baseStation of this.baseStationMap.values()) {
-          if (
-            baseStation.marker &&
-            baseStation.longitude != 0 &&
-            baseStation.latitude != 0
-          ) {
-            var point = baseStation.marker.getPosition();
-            baseStation.customOverlay.setPosition(point);
-          }
-        }
+    dynamicLoadScript("./offlinemap/map_load.js").then(() => {
+      dynamicLoadScript("./offlinemap/bmapgl.min.js").then(() => {
+        dynamicLoadScript("./offlinemap/tools/convertor.js");
+        this.initialize();
+        this.updateBaseStationMap();
         this.getGPS();
-        this.updateBaseStationSignal();
-        this.updateBaseStationStatus();
-      }, 3000);
-    };
+        this.timer = setInterval(() => {
+          for (let baseStation of this.baseStationMap.values()) {
+            if (
+              baseStation.marker &&
+              baseStation.longitude != 0 &&
+              baseStation.latitude != 0
+            ) {
+              var point = baseStation.marker.getPosition();
+              baseStation.customOverlay.setPosition(point);
+            }
+          }
+          this.getGPS();
+          this.updateBaseStationSignal();
+          this.updateBaseStationStatus();
+        }, 3000);
+      });
+    });
   },
   beforeDestroy() {
     clearInterval(this.timer);
@@ -349,14 +349,13 @@ export default {
       this.gps.converted = true;
     },
     moveBaseStation(baseStation) {
-      const convertor = new window.BMapGL.Convertor();
-      convertor.translate(
+      window.BMapGL.Convertor.translate(
         [new window.BMapGL.Point(baseStation.longitude, baseStation.latitude)],
         1,
         5,
         function (data) {
-          baseStation.marker.setPosition(data.points[0]);
-          baseStation.customOverlay.setPosition(data.points[0]);
+          baseStation.marker.setPosition(data);
+          baseStation.customOverlay.setPosition(data);
         }
       );
     },
@@ -370,11 +369,10 @@ export default {
         return;
       }
       if (converted == true) {
-        var points = [new window.BMapGL.Point(longitude, latitude)];
-        var convertor = new window.BMapGL.Convertor();
-        convertor.translate(points, 1, 5, (data) => {
+        let points = [new window.BMapGL.Point(longitude, latitude)];
+        window.BMapGL.Convertor.translate(points, 1, 5, (data) => {
           if (data.status == 0) {
-            this.map.setCenter(data.points[0]);
+            this.map.setCenter(data);
           }
         });
       } else {
@@ -472,7 +470,7 @@ export default {
       });
     },
     closeInfoBox() {
-        for (let baseStation of this.baseStationMap.values()) {
+      for (let baseStation of this.baseStationMap.values()) {
         if (baseStation.infoBox) {
           baseStation.infoBox.close();
         }
