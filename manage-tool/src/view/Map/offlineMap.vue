@@ -2,11 +2,28 @@
  * @Anthor: liangshuang15
  * @Description: 
  * @Date: 2022-10-11 11:50:18
- * @LastEditTime: 2022-10-12 16:38:13
+ * @LastEditTime: 2022-10-12 19:46:12
  * @FilePath: /wbmanageTool/manage-tool/src/view/Map/offlineMap.vue
 -->
 <template>
-  <div id="map_container"></div>
+  <div>
+    <div id="map_container"></div>
+    <el-dialog :title="dialogTitle" :visible.sync="dialogVisible" width="40%">
+      <el-date-picker
+        v-model="dateValue"
+        type="datetimerange"
+        value-format="yyyy-MM-ddThh:mm:ss"
+        range-separator="至"
+        start-placeholder="开始日期"
+        end-placeholder="结束日期"
+      >
+      </el-date-picker>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="dialogVisible = false">取 消</el-button>
+        <el-button type="primary" @click="handleGetTrack">确 定</el-button>
+      </span>
+    </el-dialog>
+  </div>
 </template>
 <script>
 import { dynamicLoadScript } from "../../util";
@@ -24,12 +41,17 @@ export default {
     return {
       map: null,
       timer: null,
+      dialogVisible: false,
+      dialogTitle: "",
+      dateValue: "",
+      dialogMac: "",
       gps: {
         longitude: 0,
         latitude: 0,
         resetCenter: true,
         converted: true,
       },
+      trackPolyline: new Map(),
       baseStationMap: new Map(), // 基站信息
     };
   },
@@ -65,6 +87,7 @@ export default {
           this.updateBaseStationSignal();
           this.updateBaseStationStatus();
         }, 3000);
+        window.handleShowTrackDialog = this.handleShowTrackDialog;
       });
     });
   },
@@ -408,7 +431,6 @@ export default {
                 color = "#969696";
                 imgurl = "/assets/icon4.png";
               }
-              console.log(imgurl, 'imgurl')
               signal.topology = new window.BMapGL.Polyline(points, {
                 strokeTexture: {
                   url: imgurl,
@@ -465,13 +487,81 @@ export default {
     setContextMenu(baseStation) {
       this.closeInfoBox();
       let htmlText = [];
+      let ref = baseStation.mac;
       htmlText.push(
-        `<li><div class='left' onclick="handleShowTrackDialog(baseStation)">轨迹</div></li>`
+        `<li><div class='left' onclick=handleShowTrackDialog("${ref}")>轨迹</div></li>`
       );
       dynamicLoadScript(
         "//mapopen.bj.bcebos.com/github/BMapGLLib/InfoBox/src/InfoBox.js"
       ).then(() => {
         this.showInfoBox(baseStation, htmlText);
+      });
+    },
+    handleShowTrackDialog(mac) {
+      this.dialogVisible = true;
+      for (let baseStation of this.baseStationMap.values()) {
+        if (baseStation.mac === mac) {
+          this.dialogMac = mac;
+          this.dialogTitle = `显示${baseStation.name}的轨迹`;
+        }
+      }
+    },
+    handleGetTrack() {
+      if (!this.dateValue || this.dateValue.length < 1) {
+        return;
+      }
+      let begin_time = this.dateValue[0];
+      let end_time = this.dateValue[1];
+      const query = this.$route.query || {};
+      const url = `${API.getTrack}/${query.type}/${this.dialogMac}/${begin_time}/${end_time}`;
+      const params = {};
+      fetchService({ url, params })
+        .then((res) => {
+          const gpsList = res.List || [];
+          this.dialogVisible = false;
+          this.closeInfoBox();
+          this.showTrack(gpsList, this.dialogMac);
+        })
+        .catch(() => {
+          this.dialogVisible = false;
+          this.closeInfoBox();
+        });
+    },
+    clearTrack() {
+      for (let trackLine of this.trackPolyline.values()) {
+        this.map.removeOverlay(trackLine);
+        this.trackPolyline = null;
+        this.trackPolyline = new Map();
+      }
+    },
+    showTrack(gpsList, mac) {
+      let points = [];
+      gpsList.map((item) => {
+        window.BMapGL.Convertor.translate(
+          [new window.BMapGL.Point(item.long, item.lat)],
+          1,
+          5,
+          (data) => {
+            points.push(data);
+            if (points.length === gpsList.length) {
+              for (let trackLine of this.trackPolyline.values()) {
+                if (trackLine.mac === mac) {
+                  this.map.removeOverlay(trackLine);
+                  this.trackPolyline.delete(mac);
+                }
+              }
+              const trackPolyline = new window.BMapGL.Polyline(points, {
+                enableEditing: false,
+                enableClicking: true,
+                strokeWeight: "8",
+                strokeOpacity: 0.8,
+                strokeColor: "#18a45b",
+              });
+              this.trackPolyline.set(mac, trackPolyline);
+              this.map.addOverlay(trackPolyline);
+            }
+          }
+        );
       });
     },
     closeInfoBox() {
@@ -502,6 +592,9 @@ export default {
 };
 </script>
 <style>
+.el-dialog__header {
+  text-align: left;
+}
 ol li,
 ul li {
   list-style: none;

@@ -2,18 +2,18 @@
  * @Anthor: liangshuang15
  * @Description: 
  * @Date: 2022-10-11 11:34:47
- * @LastEditTime: 2022-10-11 20:30:55
+ * @LastEditTime: 2022-10-12 19:39:16
  * @FilePath: /wbmanageTool/manage-tool/src/view/Map/index.vue
 -->
 <template>
   <div>
     <div class="info">
-      <div class="info-item" @click="handleGuiji">{{ showGuiji ? '隐藏轨迹':'显示轨迹' }}</div>
+      <div class="info-item" @click="handleClearGuiji">清除轨迹</div>
       <div class="info-item" @click="handleTuoPu">{{ showTuoPu ? '隐藏拓扑': '显示拓扑' }}</div>
       <div class="info-item" @click="handleMapType">{{mapOnlineType ? '在线': '离线'  }}</div>
     </div>
-    <online-map :showTuoPu="showTuoPu" v-if="mapOnlineType"></online-map>
-    <offline-map :showTuoPu="showTuoPu" v-else></offline-map>
+    <online-map ref="online" :showTuoPu="showTuoPu" v-if="mapOnlineType"></online-map>
+    <offline-map ref="offline" :showTuoPu="showTuoPu" v-else></offline-map>
   </div>
 </template>
 <script>
@@ -32,7 +32,7 @@ export default {
       },
       showGuiji: false, // 显示轨迹
       showTuoPu: false, // 显示拓扑
-      mapOnlineType: true,
+      mapOnlineType: false,
       monitorMap: new Map(),
       baseStationMap: new Map(), // 基站信息
     };
@@ -48,8 +48,15 @@ export default {
         window.BMapGL = null;
         this.mapOnlineType = !this.mapOnlineType;
     },
-    handleGuiji() {
-        this.showGuiji = !this.showGuiji;
+    handleClearGuiji() {
+        const onlineRefs = this.$refs['online'];
+        const offlineRefs = this.$refs['offline'];
+        if (offlineRefs) {
+          offlineRefs.clearTrack();
+        }
+        if (onlineRefs) {
+          onlineRefs.clearTrack();
+        }
     },
     handleTuoPu() {
         this.showTuoPu = !this.showTuoPu;
