@@ -2,7 +2,7 @@
  * @Anthor: liangshuang15
  * @Description: 
  * @Date: 2022-10-11 11:50:18
- * @LastEditTime: 2022-10-11 20:33:54
+ * @LastEditTime: 2022-10-12 10:42:57
  * @FilePath: /wbmanageTool/manage-tool/src/view/Map/offlineMap.vue
 -->
 <template>
@@ -519,7 +519,7 @@ ul li {
 }
 
 .infoBoxContent .list:hover {
-  color: blue;
+  color: rgba(27, 142, 236, 1);
 }
 
 .infoBoxContent .list ul {
