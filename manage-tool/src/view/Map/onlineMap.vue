@@ -2,7 +2,7 @@
  * @Anthor: liangshuang15
  * @Description: 
  * @Date: 2022-10-11 11:50:18
- * @LastEditTime: 2022-10-12 16:31:43
+ * @LastEditTime: 2022-10-12 16:42:37
  * @FilePath: /wbmanageTool/manage-tool/src/view/Map/onlineMap.vue
 -->
 <template>
@@ -281,57 +281,6 @@ export default {
       const params = {};
       fetchService({ url, params }).then((res) => {
         let baseStationSignalArray = res.List || [];
-        console.log(baseStationSignalArray, 'baseStationSignalArray')
-        baseStationSignalArray = [
-        {
-            "num":1,
-            "name":"节点1",
-            "ip":"192.168.1.1",
-            "mac":"01:01:01:01:01:01",
-            "signals":[
-                {
-                    "mac":"01:01:01:01:01:02",
-                    "intensity":-55
-                },
-                {
-                    "mac":"01:01:01:01:01:03",
-                    "intensity":-95
-                }
-            ]
-        },
-        {
-            "num":2,
-            "name":"节点2",
-            "ip":"192.168.1.2",
-            "mac":"01:01:01:01:01:02",
-            "signals":[
-                {
-                    "mac":"01:01:01:01:01:01",
-                    "intensity":-70
-                },
-                {
-                    "mac":"01:01:01:01:01:03",
-                    "intensity":-95
-                }
-            ]
-        },
-        {
-            "num":3,
-            "name":"节点3",
-            "ip":"192.168.1.3",
-            "mac":"01:01:01:01:01:03",
-            "signals":[
-                {
-                    "mac":"01:01:01:01:01:01",
-                    "intensity":-95
-                },
-                {
-                    "mac":"01:01:01:01:01:02",
-                    "intensity":-95
-                }
-            ]
-        }
-    ];
         for (let i = 0; i < baseStationSignalArray.length; i++) {
           let baseStationSignal = baseStationSignalArray[i];
          
