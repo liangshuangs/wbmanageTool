@@ -2,7 +2,7 @@
  * @Anthor: liangshuang15
  * @Description: 
  * @Date: 2022-10-11 11:50:18
- * @LastEditTime: 2022-10-12 10:42:49
+ * @LastEditTime: 2022-10-12 16:31:43
  * @FilePath: /wbmanageTool/manage-tool/src/view/Map/onlineMap.vue
 -->
 <template>
@@ -281,12 +281,64 @@ export default {
       const params = {};
       fetchService({ url, params }).then((res) => {
         let baseStationSignalArray = res.List || [];
+        console.log(baseStationSignalArray, 'baseStationSignalArray')
+        baseStationSignalArray = [
+        {
+            "num":1,
+            "name":"节点1",
+            "ip":"192.168.1.1",
+            "mac":"01:01:01:01:01:01",
+            "signals":[
+                {
+                    "mac":"01:01:01:01:01:02",
+                    "intensity":-55
+                },
+                {
+                    "mac":"01:01:01:01:01:03",
+                    "intensity":-95
+                }
+            ]
+        },
+        {
+            "num":2,
+            "name":"节点2",
+            "ip":"192.168.1.2",
+            "mac":"01:01:01:01:01:02",
+            "signals":[
+                {
+                    "mac":"01:01:01:01:01:01",
+                    "intensity":-70
+                },
+                {
+                    "mac":"01:01:01:01:01:03",
+                    "intensity":-95
+                }
+            ]
+        },
+        {
+            "num":3,
+            "name":"节点3",
+            "ip":"192.168.1.3",
+            "mac":"01:01:01:01:01:03",
+            "signals":[
+                {
+                    "mac":"01:01:01:01:01:01",
+                    "intensity":-95
+                },
+                {
+                    "mac":"01:01:01:01:01:02",
+                    "intensity":-95
+                }
+            ]
+        }
+    ];
         for (let i = 0; i < baseStationSignalArray.length; i++) {
-          var baseStationSignal = baseStationSignalArray[i];
+          let baseStationSignal = baseStationSignalArray[i];
+         
           if (this.baseStationMap.has(baseStationSignal.mac) == false) continue;
           let baseStation = this.baseStationMap.get(baseStationSignal.mac);
           if (baseStation.name != baseStationSignal.name) {
-            var name = baseStationSignal.name;
+            let name = baseStationSignal.name;
             if (name == null || name == "") {
               name = baseStationSignal.ip;
             }
@@ -391,51 +443,55 @@ export default {
               if (baseStation1.marker == null || baseStation2.marker == null) {
                 break;
               }
-              var point1 = baseStation1.marker.getPosition();
-              var point2 = baseStation2.marker.getPosition();
-              var pixel1 = this.map.pointToPixel(point1);
-              var pixel2 = this.map.pointToPixel(point2);
-              // var lngDiff = Math.abs(point1.lng - point2.lng) / 2;
-              // var latDiff = Math.abs(point1.lat - point2.lat) / 2;
-              var xDiff = Math.abs(pixel1.x - pixel2.x) / 2;
-              var yDiff = Math.abs(pixel1.y - pixel2.y) / 2;
-              // if (point1.lng < point2.lng) point2.lng = point1.lng + lngDiff;
-              // else point2.lng = point1.lng - lngDiff;
-              // if (point1.lat < point2.lat) point2.lat = point1.lat + latDiff;
-              // else point2.lat = point1.lat - latDiff;
-              var points = [point1, point2];
+              let point1 = baseStation1.marker.getPosition();
+              let point2 = baseStation2.marker.getPosition();
+              let centerPoint = this.getcenterpoiont(point1, point2);
+              var points = [point1, centerPoint];
+              let imgurl = "/assets/icon1.png";
               var color = "#00FF00";
-              if (signal.intensity <= 0 && signal.intensity >= -68)
+              if (signal.intensity <= 0 && signal.intensity >= -68) {
                 color = "#00FF00";
-              else if (signal.intensity < -68 && signal.intensity >= -78)
+                imgurl = "/assets/icon1.png";
+              } else if (signal.intensity < -68 && signal.intensity >= -78) {
                 color = "#FFFF00";
-              else if (signal.intensity < -78 && signal.intensity >= -88)
+                imgurl = "/assets/icon2.png";
+              } else if (signal.intensity < -78 && signal.intensity >= -88) {
                 color = "#FF0000";
-              else color = "#969696";
-              if (xDiff > 30 || yDiff > 30) {
-                signal.topology = new window.BMapGL.Polyline(points, {
-                  enableEditing: false,
-                  enableClicking: true,
-                  // icons: [new window.BMapGL.IconSequence(arrow, "20", "30")],
-                  strokeWeight: "8",
-                  strokeOpacity: 1.0,
-                  strokeColor: color,
-                });
+                imgurl = "/assets/icon3.png";
               } else {
-                signal.topology = new window.BMapGL.Polyline(points, {
-                  enableEditing: false,
-                  enableClicking: true,
-                  strokeWeight: "8",
-                  strokeOpacity: 1.0,
-                  strokeColor: color,
-                });
+                color = "#969696";
+                imgurl = "/assets/icon4.png";
               }
+              signal.topology = new window.BMapGL.Polyline(points, {
+                strokeTexture: {
+                  url: imgurl,
+                  width: 16,
+                  height: 64,
+                },
+                enableEditing: false,
+                enableClicking: true,
+                strokeWeight: 8,
+                strokeOpacity: 1,
+                strokeColor: color,
+              });
               signal.topology.name = "topology";
               this.map.addOverlay(signal.topology);
             }
           }
         }
       }
+    },
+    getcenterpoiont(point1, point2) {
+      let lng1 = point1.lng;
+      let lat1 = point1.lat;
+      let lng2 = point2.lng;
+      let lat2 = point2.lat;
+      let lngca = (Math.max(lng1, lng2) - Math.min(lng1, lng2)) / 2;
+      let latca = (Math.max(lat1, lat2) - Math.min(lat1, lat2)) / 2;
+      let lngcenter = Math.min(lng1, lng2) + lngca;
+      let latcenter = Math.min(lat1, lat2) + latca;
+      let pointcenter = new window.BMapGL.Point(lngcenter, latcenter);
+      return pointcenter;
     },
     clearTopology() {
       let allOverlay = this.map.getOverlays() || [];
@@ -472,7 +528,7 @@ export default {
       });
     },
     closeInfoBox() {
-        for (let baseStation of this.baseStationMap.values()) {
+      for (let baseStation of this.baseStationMap.values()) {
         if (baseStation.infoBox) {
           baseStation.infoBox.close();
         }
