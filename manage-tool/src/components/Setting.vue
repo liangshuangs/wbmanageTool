@@ -2,7 +2,7 @@
  * @Anthor: liangshuang15
  * @Description: 
  * @Date: 2022-09-20 15:30:06
- * @LastEditTime: 2022-09-28 10:46:28
+ * @LastEditTime: 2022-10-13 14:26:42
  * @FilePath: /wbmanageTool/manage-tool/src/components/Setting.vue
 -->
 <template>
@@ -158,7 +158,7 @@ export default {
           
           const params = {
             url,
-            method: 'PUT',
+            method: 'put',
             params: {
               text: randomString,
               secret: encryptByDES(text, secret), // 旧密码
