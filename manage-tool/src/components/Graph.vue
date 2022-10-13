@@ -2,7 +2,7 @@
  * @Anthor: liangshuang15
  * @Description: 
  * @Date: 2022-09-21 12:58:16
- * @LastEditTime: 2022-09-21 23:29:20
+ * @LastEditTime: 2022-10-13 11:01:17
  * @FilePath: /wbmanageTool/manage-tool/src/components/Graph.vue
 -->
 <template>
@@ -24,7 +24,6 @@ export default {
   watch: {
     graphData: {
       handler(newVal) {
-        console.log(newVal, 'newVal')
         if(newVal) {
           this.updateEchart(newVal);
         }
