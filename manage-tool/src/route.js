@@ -2,7 +2,7 @@
  * @Anthor: liangshuang15
  * @Description: 
  * @Date: 2022-09-19 11:46:31
- * @LastEditTime: 2022-09-23 16:25:12
+ * @LastEditTime: 2022-10-13 12:16:49
  * @FilePath: /wbmanageTool/manage-tool/src/route.js
  */
 import Vue from 'vue';
@@ -11,26 +11,39 @@ import Home from './view/Home';
 import TuoPu from './view/TuoPu/index';
 import Map from './view/Map/index';
 import Login from './view/Login/index';
+import Layout from './components/Layout.vue';
 Vue.use(Router);
 const routes = [
     {
         path: '/tuopu',
         name: 'TuoPu',
-       component: TuoPu
+       component: Layout,
+       children: [
+         {path: '/tuopu',component: TuoPu}
+        ]
     },
     {
         path: '/map',
-        component: Map
+        component: Layout,
+        children: [
+         {path: '/map',component: Map}
+        ]
      },
      {
         path: '/index',
         name: 'Home',
-        component: Home
+        component: Layout,
+        children: [
+         {path: '/index',component: Home}
+        ]
      },
      {
         path: '/',
         name: 'Home',
-        component: Home
+        component: Layout,
+        children: [
+         {path: '/',component: Home}
+        ]
      },
      {
         path: '/login',

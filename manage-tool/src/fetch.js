@@ -2,7 +2,7 @@
  * @Anthor: liangshuang15
  * @Description: 
  * @Date: 2022-09-19 20:17:58
- * @LastEditTime: 2022-09-25 09:38:03
+ * @LastEditTime: 2022-10-13 12:07:52
  * @FilePath: /wbmanageTool/manage-tool/src/fetch.js
  */
 import axios from 'axios';
@@ -23,7 +23,6 @@ export function fetchService(params) {
       url,
       data: data
     }).then((res) => {
-      console.log(res, '---')
       if (res && +res.status === 200) {
         if (res.data && +res.data.code === 0) {
           return Promise.resolve(res.data);

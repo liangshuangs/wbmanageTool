@@ -2,7 +2,7 @@
  * @Anthor: liangshuang15
  * @Description: 
  * @Date: 2022-09-22 15:31:38
- * @LastEditTime: 2022-09-25 09:45:04
+ * @LastEditTime: 2022-10-13 12:21:40
  * @FilePath: /wbmanageTool/manage-tool/src/view/Login/index.vue
 -->
 <template>
@@ -28,7 +28,6 @@
             <el-button type="primary" @click="submitForm('Form')"
               >登陆</el-button
             >
-            <el-button @click="resetForm('Form')">重置</el-button>
           </el-form-item>
         </el-form>
       </div>
@@ -66,14 +65,10 @@ export default {
       fetchService(params).then((res) => {
         setCookie('TOKEN', res.token);
         // 跳转到首页
-        this.$router.push('/index/index');
+        this.$router.push('/');
       }).catch(err => {
         this.$message.error(err.message || '登陆失败');
       });
-    },
-    // 重置
-    resetForm(ref) {
-      console.log(ref, "ddd");
     },
   },
 };

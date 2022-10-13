@@ -2,7 +2,7 @@
  * @Anthor: liangshuang15
  * @Description: 
  * @Date: 2022-09-19 11:46:59
- * @LastEditTime: 2022-09-28 11:02:49
+ * @LastEditTime: 2022-10-13 12:06:55
  * @FilePath: /wbmanageTool/manage-tool/src/view/TuoPu/index.vue
 -->
 <template>
@@ -175,7 +175,7 @@ export default {
     this.getTuoPu();
     this.itmer = setInterval(() => {
       this.getTuoPu();
-    }, 2000);
+    }, 3000);
   },
   beforeDestroy() {
     clearInterval(this.timer);
