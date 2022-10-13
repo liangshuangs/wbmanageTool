@@ -63,9 +63,7 @@
   </style>
   <script type="text/javascript"
     src="//api.map.baidu.com/api?type=webgl&v=1.0&ak=ibLWiaQA3tf6QUsv6AGUO6GSccxMj2gn"></script>
-  <script type="text/javascript"
-    src="http://api.map.baidu.com/library/DistanceTool/1.2/src/DistanceTool_min.js"></script>
-    <!-- <script type="text/javascript" src="http://api.map.baidu.com/api?v=3.0&ak=ibLWiaQA3tf6QUsv6AGUO6GSccxMj2gn"></script> -->
+    <script src="./static//offlinemap//tools/DistanceTool.min.js"></script>
   <link href="//mapopen.bj.bcebos.com/github/BMapGLLib/InfoBox/src/InfoBox.js" rel="stylesheet">
   <script src="//mapopen.bj.bcebos.com/github/BMapGLLib/InfoBox/src/InfoBox.js"></script>
   <script type="text/javascript">
@@ -370,7 +368,7 @@
       gps.latitude = e.point.lat;
       gps.converted = false;
     });
-    marker.addEventListener('mousedown', function (e) {
+    marker.addEventListener('rightclick', function (e) {
       setContextMenu(baseStation);
     });
   }
@@ -613,7 +611,7 @@
   map.addControl(distanceControl);
 
   // 测距
-  var distance = new BMapLib.DistanceTool(map);
+  var distance = new window.BMapGLLib.DistanceTool(map);
   function openDistanceTool() {
     distance.open();
   }
@@ -686,9 +684,18 @@
   }
 
   var isShowTopology = false;
-  // var arrow = new BMap.Symbol(BMap_Symbol_SHAPE_BACKWARD_OPEN_ARROW, {
-  //    scale: 0.6, strokeColor: '#fff', strokeWeight: '2'});
-  // arrow.name = "topology";
+  function getcenterpoiont(point1, point2) {
+    let lng1 = point1.lng;
+    let lat1 = point1.lat;
+    let lng2 = point2.lng;
+    let lat2 = point2.lat;
+    let lngca = (Math.max(lng1, lng2) - Math.min(lng1, lng2)) / 2;
+    let latca = (Math.max(lat1, lat2) - Math.min(lat1, lat2)) / 2;
+    let lngcenter = Math.min(lng1, lng2) + lngca;
+    let latcenter = Math.min(lat1, lat2) + latca;
+    let pointcenter = new window.BMapGL.Point(lngcenter, latcenter);
+    return pointcenter;
+  }
   function showTopology() {
     clearTopology();
     for (baseStation1 of baseStationMap.values()) {
@@ -700,42 +707,32 @@
               break;
             var point1 = baseStation1.marker.getPosition();
             var point2 = baseStation2.marker.getPosition();
-            var pixel1 = map.pointToPixel(point1);
-            var pixel2 = map.pointToPixel(point2);
-            // var lngDiff = Math.abs(point1.lng - point2.lng) / 2;
-            // var latDiff = Math.abs(point1.lat - point2.lat) / 2;
-            var xDiff = Math.abs(pixel1.x - pixel2.x) / 2;
-            var yDiff = Math.abs(pixel1.y - pixel2.y) / 2;
-            // if (point1.lng < point2.lng)
-            //   point2.lng = point1.lng + lngDiff;
-            // else
-            //   point2.lng = point1.lng - lngDiff;
-            // if (point1.lat < point2.lat)
-            //   point2.lat = point1.lat + latDiff;
-            // else
-            //   point2.lat = point1.lat - latDiff;
-            var points = [point1, point2];
+            var centerPoint = getcenterpoiont(point1, point2);
+            var points = [point1, centerPoint];
+            let imgurl = "images/icon1.png";
             var color = "#00FF00";
-            if (signal.intensity <= 0 && signal.intensity >= -68)
-              color = "#00FF00";
-            else if (signal.intensity < -68 && signal.intensity >= -78)
-              color = "#FFFF00";
-            else if (signal.intensity < -78 && signal.intensity >= -88)
-              color = "#FF0000";
-            else
-              color = "#969696";
-            if (xDiff > 30 || yDiff > 30) {
+            if (signal.intensity <= 0 && signal.intensity >= -68) {
+                color = "#00FF00";
+                imgurl = "images/icon1.png";
+              } else if (signal.intensity < -68 && signal.intensity >= -78) {
+                color = "#FFFF00";
+                imgurl = "images/icon2.png";
+              } else if (signal.intensity < -78 && signal.intensity >= -88) {
+                color = "#FF0000";
+                imgurl = "images/icon3.png";
+              } else {
+                color = "#969696";
+                imgurl = "images/icon4.png";
+              }
               signal.topology = new BMapGL.Polyline(points, {
+                strokeTexture: {
+                  url: imgurl,
+                  width: 16,
+                  height: 64,
+                },
                 enableEditing: false, enableClicking: true,
-                // icons: [new BMap.IconSequence(arrow, '20', '30')],
                 strokeWeight: '8', strokeOpacity: 1.0, strokeColor: color
               });
-            } else {
-              signal.topology = new BMapGL.Polyline(points, {
-                enableEditing: false, enableClicking: true,
-                strokeWeight: '8', strokeOpacity: 1.0, strokeColor: color
-              });
-            }
             signal.topology.name = "topology";
             map.addOverlay(signal.topology);
           }
@@ -816,12 +813,12 @@
     window.showInfo(attributes + methods);
   }
   // 测试代码
-  // var updateBaseStationSignalJson = '[{"id":10952001,"num":"1","name":"节点1","ip":"192.168.1.1","mac":"01:01:01:01:01:01","signalArray":[{"mac":"01:01:01:01:01:02","intensity":-95},{"mac":"01:01:01:01:01:03","intensity":-95}]},{"id":72,"num":"2","name":"节点2","ip":"192.168.1.2","mac":"01:01:01:01:01:02","signalArray":[{"mac":"01:01:01:01:01:01","intensity":-33},{"mac":"01:01:01:01:01:03","intensity":-33}]},{"id":22,"num":"3","name":"节点3","ip":"192.168.1.3","mac":"01:01:01:01:01:03","signalArray":[{"mac":"01:01:01:01:01:01","intensity":-33},{"mac":"01:01:01:01:01:02","intensity":-33}]}]';
-  // var updateBaseStationMapJson = '[{"id":10952001,"num":"1","name":"节点1","ip":"192.168.1.1","mac":"01:01:01:01:01:01"},{"id":72,"num":"2","name":"节点2","ip":"192.168.1.2","mac":"01:01:01:01:01:02"},{"id":22,"num":"3","name":"节点3","ip":"192.168.1.3","mac":"01:01:01:01:01:03"}]'
-  // updateBaseStationMap(updateBaseStationMapJson);
+  var updateBaseStationSignalJson = '[{"id":10952001,"num":"1","name":"节点1","ip":"192.168.1.1","mac":"01:01:01:01:01:01","signalArray":[{"mac":"01:01:01:01:01:02","intensity":-95},{"mac":"01:01:01:01:01:03","intensity":-95}]},{"id":72,"num":"2","name":"节点2","ip":"192.168.1.2","mac":"01:01:01:01:01:02","signalArray":[{"mac":"01:01:01:01:01:01","intensity":-33},{"mac":"01:01:01:01:01:03","intensity":-33}]},{"id":22,"num":"3","name":"节点3","ip":"192.168.1.3","mac":"01:01:01:01:01:03","signalArray":[{"mac":"01:01:01:01:01:01","intensity":-33},{"mac":"01:01:01:01:01:02","intensity":-33}]}]';
+  var updateBaseStationMapJson = '[{"id":10952001,"num":"1","name":"节点1","ip":"192.168.1.1","mac":"01:01:01:01:01:01"},{"id":72,"num":"2","name":"节点2","ip":"192.168.1.2","mac":"01:01:01:01:01:02"},{"id":22,"num":"3","name":"节点3","ip":"192.168.1.3","mac":"01:01:01:01:01:03"}]'
+  updateBaseStationMap(updateBaseStationMapJson);
   var timer = setInterval(function () {
-    // updateBaseStationSignal(updateBaseStationSignalJson);
-    // UpdateBaseStationPos(10952001, 116.41000000022, 39.96030079556);
+    updateBaseStationSignal(updateBaseStationSignalJson);
+    UpdateBaseStationPos(10952001, 116.41000000022, 39.96030079556);
     for (baseStation of baseStationMap.values()) {
       if (baseStation.marker &&
         (baseStation.longitude != 0 && baseStation.latitude != 0)) {

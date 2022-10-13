@@ -2,8 +2,8 @@
  * @Anthor: liangshuang15
  * @Description: 
  * @Date: 2022-09-28 16:16:13
- * @LastEditTime: 2022-10-11 10:42:10
- * @FilePath: /wbmanageTool/map2/js/convertor.js
+ * @LastEditTime: 2022-10-14 17:22:13
+ * @FilePath: /wbmanageTool/map2/static/offlinemap/tools/convertor.js
  */
 //2011-7-25
 (function(){        //闭包
@@ -26,22 +26,57 @@
         // Use insertBefore instead of appendChild  to circumvent an IE6 bug.
         head.insertBefore( script, head.firstChild );
     }
-    function translate(point,from, to, callback){
-        var callbackName = 'cbk_' + Math.round(Math.random() * 10000);    //随机函数名
-        var callbackName = 'cbk_' + Math.round(Math.random() * 10000);    //随机函数名
-        // var xyUrl = "http://api.map.baidu.com/ag/coord/convert?from="+ type + "&to=5&x=" + point.lng + "&y=" + point.lat + "&callback=BMap.Convertor." + callbackName;
-        // var xyUrl =  `http://api.map.baidu.com/ag/coord/convert?from=${from}&to=${to}&x=${point[0].lng}&y=${point[0].lat}&callback=window.BMapGL.Convertor.`+callbackName;
-        var xyUrl = `https://api.map.baidu.com/geoconv/v1/?coords=${point[0].lng},${point[0].lat}&from=${from}&to=${to}&ak=ibLWiaQA3tf6QUsv6AGUO6GSccxMj2gn&callback=window.BMapGL.Convertor.`+ callbackName;
-        //动态创建script标签
-        load_script(xyUrl);
-        window.BMapGL.Convertor[callbackName] = function(xyResult){
-            delete window.BMapGL.Convertor[callbackName];    //调用完需要删除改函数
-            var point = new window.BMapGL.Point(xyResult.result[0].x, xyResult.result[0].y);
-            callback && callback(point);
-        }
+//     pi: 圆周率。 a: 卫星椭球坐标投影到平面地图坐标系的投影因子。
+// ee: 椭球的偏心率。
+// x_pi: 圆周率转换量
+    let pi = 3.14159265358979324;
+    let a = 6378245.0;
+   let ee = 0.00669342162296594323;
+    let x_pi = 3.14159265358979324 * 3000.0 / 180.0;
+    function wgs2gcj (lat, lon) {
+        var dLat = transformLat(lon - 105.0, lat - 35.0);
+        var dLon = transformLon(lon - 105.0, lat - 35.0);
+        var radLat = lat / 180.0 * pi;
+        var magic = Math.sin(radLat);
+        magic = 1 - ee * magic * magic;
+        var sqrtMagic = Math.sqrt(magic);
+       dLat = (dLat * 180.0) / ((a * (1 - ee)) / (magic * sqrtMagic) * pi);
+       dLon = (dLon * 180.0) / (a / sqrtMagic * Math.cos(radLat) * pi);
+       let mgLat = lat + dLat;
+       let mgLon = lon + dLon;
+       let point = new window.BMapGL.Point(mgLon, mgLat)
+       return point;
     }
+    function transformLat(lat, lon) {
+        let ret = -100.0 + 2.0 * lat + 3.0 * lon + 0.2 * lon * lon + 0.1 * lat * lon + 0.2 * Math.sqrt(Math.abs(lat));
+       ret += (20.0 * Math.sin(6.0 * lat * pi) + 20.0 * Math.sin(2.0 * lat * pi)) * 2.0 / 3.0;
+       ret += (20.0 * Math.sin(lon * pi) + 40.0 * Math.sin(lon / 3.0 * pi)) * 2.0 / 3.0;
+       ret += (160.0 * Math.sin(lon / 12.0 * pi) + 320 * Math.sin(lon * pi  / 30.0)) * 2.0 / 3.0;
+       return ret;
+    }
+    function transformLon(lat, lon) {
+        let ret = 300.0 + lat + 2.0 * lon + 0.1 * lat * lat + 0.1 * lat * lon + 0.1 * Math.sqrt(Math.abs(lat));
+       ret += (20.0 * Math.sin(6.0 * lat * pi) + 20.0 * Math.sin(2.0 * lat * pi)) * 2.0 / 3.0;
+       ret += (20.0 * Math.sin(lat * pi) + 40.0 * Math.sin(lat / 3.0 * pi)) * 2.0 / 3.0;
+       ret += (150.0 * Math.sin(lat / 12.0 * pi) + 300.0 * Math.sin(lat / 30.0 * pi)) * 2.0 / 3.0;
+       return ret;
+    }
+    // function translate(point,from, to, callback){
+    //     var callbackName = 'cbk_' + Math.round(Math.random() * 10000);    //随机函数名
+    //     var callbackName = 'cbk_' + Math.round(Math.random() * 10000);    //随机函数名
+    //     // var xyUrl = "http://api.map.baidu.com/ag/coord/convert?from="+ type + "&to=5&x=" + point.lng + "&y=" + point.lat + "&callback=BMap.Convertor." + callbackName;
+    //     // var xyUrl =  `http://api.map.baidu.com/ag/coord/convert?from=${from}&to=${to}&x=${point[0].lng}&y=${point[0].lat}&callback=window.BMapGL.Convertor.`+callbackName;
+    //     var xyUrl = `https://api.map.baidu.com/geoconv/v1/?coords=${point[0].lng},${point[0].lat}&from=${from}&to=${to}&ak=ibLWiaQA3tf6QUsv6AGUO6GSccxMj2gn&callback=window.BMapGL.Convertor.`+ callbackName;
+    //     //动态创建script标签
+    //     load_script(xyUrl);
+    //     window.BMapGL.Convertor[callbackName] = function(xyResult){
+    //         delete window.BMapGL.Convertor[callbackName];    //调用完需要删除改函数
+    //         var point = new window.BMapGL.Point(xyResult.result[0].x, xyResult.result[0].y);
+    //         callback && callback(point);
+    //     }
+    // }
     
     window.BMapGL = window.BMapGL || {};
     BMapGL.Convertor = {};
-    BMapGL.Convertor.translate = translate;
+    BMapGL.Convertor.translate = wgs2gcj;
     })();
