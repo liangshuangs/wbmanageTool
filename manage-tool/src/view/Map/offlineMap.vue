@@ -2,7 +2,7 @@
  * @Anthor: liangshuang15
  * @Description: 
  * @Date: 2022-10-11 11:50:18
- * @LastEditTime: 2022-10-12 19:46:12
+ * @LastEditTime: 2022-10-14 18:04:14
  * @FilePath: /wbmanageTool/manage-tool/src/view/Map/offlineMap.vue
 -->
 <template>
@@ -123,7 +123,9 @@ export default {
             baseStation.latitude != 0
           ) {
             var point = baseStation.marker.getPosition();
-            baseStation.customOverlay.setPosition(point);
+            baseStation.customOverlay &&
+              baseStation.customOverlay.setPosition &&
+              baseStation.customOverlay.setPosition(point);
           }
         }
         this.updateBaseStationStatus();
@@ -187,6 +189,8 @@ export default {
         this.baseStationMap.clear();
         this.baseStationMap = null;
         this.baseStationMap = newBaseStationMap;
+      }).catch(err => {
+        console.log(err)
       });
     },
     // 添加基站到地图
@@ -336,6 +340,8 @@ export default {
           baseStation.signalMap = newSignalMap;
         }
         baseStationSignalArray = null;
+      }).catch(err => {
+        console.log(err)
       });
     },
     getGPS() {
@@ -348,6 +354,8 @@ export default {
           const gps = GPSArray[i];
           this.UpdateBaseStationPos(gps.mac, gps.long, gps.lat);
         }
+      }).catch(err => {
+        console.log(err)
       });
     },
     // 更新基站位置
@@ -372,15 +380,14 @@ export default {
       this.gps.converted = true;
     },
     moveBaseStation(baseStation) {
-      window.BMapGL.Convertor.translate(
-        [new window.BMapGL.Point(baseStation.longitude, baseStation.latitude)],
-        1,
-        5,
-        function (data) {
-          baseStation.marker.setPosition(data);
-          baseStation.customOverlay.setPosition(data);
-        }
+      let point = window.BMapGL.Convertor.translate(
+        baseStation.longitude,
+        baseStation.latitude
       );
+      baseStation.marker.setPosition(point);
+      baseStation.customOverlay &&
+        baseStation.customOverlay.setPosition &&
+        baseStation.customOverlay.setPosition(point);
     },
     // 复位
     resetCenter() {
@@ -392,12 +399,8 @@ export default {
         return;
       }
       if (converted == true) {
-        let points = [new window.BMapGL.Point(longitude, latitude)];
-        window.BMapGL.Convertor.translate(points, 1, 5, (data) => {
-          if (data.status == 0) {
-            this.map.setCenter(data);
-          }
-        });
+        let newPoint = window.BMapGL.Convertor.translate(latitude, longitude);
+        this.map.setCenter(newPoint);
       } else {
         this.map.setCenter(new window.BMapGL.Point(longitude, latitude));
       }
@@ -537,31 +540,25 @@ export default {
     showTrack(gpsList, mac) {
       let points = [];
       gpsList.map((item) => {
-        window.BMapGL.Convertor.translate(
-          [new window.BMapGL.Point(item.long, item.lat)],
-          1,
-          5,
-          (data) => {
-            points.push(data);
-            if (points.length === gpsList.length) {
-              for (let trackLine of this.trackPolyline.values()) {
-                if (trackLine.mac === mac) {
-                  this.map.removeOverlay(trackLine);
-                  this.trackPolyline.delete(mac);
-                }
-              }
-              const trackPolyline = new window.BMapGL.Polyline(points, {
-                enableEditing: false,
-                enableClicking: true,
-                strokeWeight: "8",
-                strokeOpacity: 0.8,
-                strokeColor: "#18a45b",
-              });
-              this.trackPolyline.set(mac, trackPolyline);
-              this.map.addOverlay(trackPolyline);
+        let newPoint = window.BMapGL.Convertor.translate(item.lat, item.long);
+        points.push(newPoint);
+        if (points.length === gpsList.length) {
+          for (let trackLine of this.trackPolyline.values()) {
+            if (trackLine.mac === mac) {
+              this.map.removeOverlay(trackLine);
+              this.trackPolyline.delete(mac);
             }
           }
-        );
+          const trackPolyline = new window.BMapGL.Polyline(points, {
+            enableEditing: false,
+            enableClicking: true,
+            strokeWeight: "8",
+            strokeOpacity: 0.8,
+            strokeColor: "#18a45b",
+          });
+          this.trackPolyline.set(mac, trackPolyline);
+          this.map.addOverlay(trackPolyline);
+        }
       });
     },
     closeInfoBox() {

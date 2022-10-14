@@ -153,7 +153,6 @@
       map.setCenter(new BMapGL.Point(longitude, latitude));
     }
   }
-
   // 更新基站
   function updateBaseStationMap(array) {
     var newBaseStationMap = new Map();
@@ -431,7 +430,7 @@
     htmlText.push(`<li><div class='left' onclick="handleShowTrackDialog(baseStation)">轨迹</div></li>`);
     showMenu = true;
     if (showMenu) {
-      showInfoBox(baseStation, htmlText);
+      showInfoBox(baseStation, htmlText, baseStation.marker);
     }
   }
 
@@ -614,11 +613,13 @@
   // 添加图片到地图
   var imageMap = new Map();
 
-  function handleDelImgIconFromMap () {
-    imageMap.delete(marker);
+  function handleDelImgIconFromMap (markerid) {
+    closeInfoBox();
+    var marker = imageMap.get(markerid);
     map.removeOverlay(marker);
+    imageMap.delete(markerid);
   }
-
+var i = 0
   function addImageToMap(url, width, height) {
     var icon = new BMapGL.Icon(url, new BMapGL.Size(width, height));
     var marker = new BMapGL.Marker(map.getCenter(), {
@@ -626,15 +627,16 @@
       enableDragging: true
     });
     marker.menu = null;
-    marker.addEventListener('a a asedown', function () {
+    marker.id = ++i;
+    marker.addEventListener('rightclick', function () {
       if (marker.infoBox) {
         marker.infoBox.close();
       }
       var htmlText = [];
-      htmlText.push(`<li><div class='left' onclick="handleDelImgIconFromMap(imageMap)">删除图标</div></li>`);
-      showInfoBox(marker, htmlText);
+      htmlText.push(`<li><div class='left' onclick="handleDelImgIconFromMap(${marker.id})">删除图标</div></li>`);
+      showInfoBox('', htmlText, marker);
     });
-    imageMap.set(marker, marker);
+    imageMap.set(marker.id, marker);
     map.addOverlay(marker);
   }
 
@@ -648,16 +650,11 @@
     var points = [];
     for (var i = 0; i < gpsList.length; i++) {
       var gps = gpsList[i];
-      points.push(new BMapGL.Point(gps.longitude, gps.latitude));
+      let newPoint =  window.BMapGL.Convertor.translate(gps.latitude, gps.longitude);
+      points.push(newPoint);
+      convPoints.push(newPoint);
       if (points.length == 10 || gpsList.length - 1 == i) {
-        var convertor = new BMapGL.Convertor();
-        convertor.translate(points, 1, 5, function (data) {
-          if (data.status == 0) {
-            for (var j = 0; j < data.points.length; j++) {
-              convPoints.push(data.points[j]);
-            }
-          }
-          if (--gpsBatch == 0) {
+        if (--gpsBatch == 0) {
             if (trackPolyline != null) {
               map.removeOverlay(trackPolyline);
               removeOverlay = null;
@@ -672,8 +669,6 @@
             });
             map.addOverlay(trackPolyline);
           }
-        });
-        points = [];
       }
     }
   }
@@ -775,8 +770,7 @@
     }
   }
 
-  function showInfoBox(baseStation, htmlText) {
-    //  "<li><div class='left'>节点2</div></li>",
+  function showInfoBox(baseStation, htmlText, marker) {
     var html = ["<div class='infoBoxContent'><div class='list'><ul>"];
       html = html.concat(htmlText);
     html.push("</ul></div>", "</div>");
@@ -790,8 +784,13 @@
       align: INFOBOX_AT_BOTTOM,
       offset: new BMapGL.Size(30, 30)
     });
-    baseStation.infoBox =infoBox;
-    infoBox.open(baseStation.marker);
+    if (baseStation) {
+      baseStation.infoBox =infoBox;
+    }
+    if (marker) {
+      marker.infoBox = infoBox;
+    }
+    infoBox.open(marker);
     
   }
 
@@ -808,12 +807,14 @@
     window.showInfo(attributes + methods);
   }
   // 测试代码
-    var updateBaseStationSignalJson = '[{"id":10952001,"num":"1","name":"节点1","ip":"192.168.1.1","mac":"01:01:01:01:01:01","signalArray":[{"mac":"01:01:01:01:01:02","intensity":-95},{"mac":"01:01:01:01:01:03","intensity":-95}]},{"id":72,"num":"2","name":"节点2","ip":"192.168.1.2","mac":"01:01:01:01:01:02","signalArray":[{"mac":"01:01:01:01:01:01","intensity":-33},{"mac":"01:01:01:01:01:03","intensity":-33}]},{"id":22,"num":"3","name":"节点3","ip":"192.168.1.3","mac":"01:01:01:01:01:03","signalArray":[{"mac":"01:01:01:01:01:01","intensity":-33},{"mac":"01:01:01:01:01:02","intensity":-33}]}]';
-    var updateBaseStationMapJson = '[{"id":10952001,"num":"1","name":"节点1","ip":"192.168.1.1","mac":"01:01:01:01:01:01"},{"id":72,"num":"2","name":"节点2","ip":"192.168.1.2","mac":"01:01:01:01:01:02"},{"id":22,"num":"3","name":"节点3","ip":"192.168.1.3","mac":"01:01:01:01:01:03"}]'
-    updateBaseStationMap(updateBaseStationMapJson);
+    // var updateBaseStationSignalJson = '[{"id":10952001,"num":"1","name":"节点1","ip":"192.168.1.1","mac":"01:01:01:01:01:01","signalArray":[{"mac":"01:01:01:01:01:02","intensity":-95},{"mac":"01:01:01:01:01:03","intensity":-95}]},{"id":72,"num":"2","name":"节点2","ip":"192.168.1.2","mac":"01:01:01:01:01:02","signalArray":[{"mac":"01:01:01:01:01:01","intensity":-33},{"mac":"01:01:01:01:01:03","intensity":-33}]},{"id":22,"num":"3","name":"节点3","ip":"192.168.1.3","mac":"01:01:01:01:01:03","signalArray":[{"mac":"01:01:01:01:01:01","intensity":-33},{"mac":"01:01:01:01:01:02","intensity":-33}]}]';
+    // var updateBaseStationMapJson = '[{"id":10952001,"num":"1","name":"节点1","ip":"192.168.1.1","mac":"01:01:01:01:01:01"},{"id":72,"num":"2","name":"节点2","ip":"192.168.1.2","mac":"01:01:01:01:01:02"},{"id":22,"num":"3","name":"节点3","ip":"192.168.1.3","mac":"01:01:01:01:01:03"}]'
+    // updateBaseStationMap(updateBaseStationMapJson);
+    // var trackJson = '[{"id":127650,"ip":"192.168.1.2","longitude":"116.400100","latitude":39.905},{"id":127654,"ip":"192.168.1.2","longitude":"116.400300","latitude":39.905},{"id":127660,"ip":"192.168.1.2","longitude":"116.400600","latitude":39.905},{"id":127664,"ip":"192.168.1.2","longitude":"116.400800","latitude":39.905},{"id":127670,"ip":"192.168.1.2","longitude":"116.401100","latitude":39.905},{"id":127672,"ip":"192.168.1.2","longitude":"116.401300","latitude":39.905},{"id":127675,"ip":"192.168.1.2","longitude":"116.401600","latitude":39.905},{"id":127678,"ip":"192.168.1.2","longitude":"116.401900","latitude":39.905},{"id":127680,"ip":"192.168.1.2","longitude":"116.402100","latitude":39.905}]';
+    // showTrack(trackJson);
   var timer = setInterval(function () {
-    updateBaseStationSignal(updateBaseStationSignalJson);
-    UpdateBaseStationPos(10952001, 116.41000000022, 39.96030079556);
+    // updateBaseStationSignal(updateBaseStationSignalJson);
+    // UpdateBaseStationPos(10952001, 116.41000000022, 39.96030079556);
     for (baseStation of baseStationMap.values()) {
       if (baseStation.marker &&
         (baseStation.longitude != 0 && baseStation.latitude != 0)) {

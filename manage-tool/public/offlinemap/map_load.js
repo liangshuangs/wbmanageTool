@@ -2,7 +2,7 @@
  * @Anthor: liangshuang15
  * @Description: 
  * @Date: 2022-09-19 16:16:14
- * @LastEditTime: 2022-10-07 10:08:35
+ * @LastEditTime: 2022-10-14 17:52:35
  * @FilePath: /wbmanageTool/manage-tool/public/offlinemap/map_load.js
  */
 /* 离线地图矢量版WebGL v1.0 接口文件
@@ -17,7 +17,7 @@ let offmapcfg = {
   'imgext' : '.jpg',			//图片格式------ 根据需要修改，一般是 .png .jpg
   'customstyle' : '',			//自定义样式的地址，为空默认在 offlinemap/customstyle/mapstyle 文件
   // 'tiles_dir' : '',       		//图片瓦片图的地址，为空默认在 offlinemap/tiles/ 目录
-  'tiles_v_dir' : 'http://111.197.172.217:5001',     		//矢量瓦片图的地址，为空默认在 offlinemap/tiles_v/ 目录
+  'tiles_v_dir' : '',     		//矢量瓦片图的地址，为空默认在 offlinemap/tiles_v/ 目录
   // 'tiles_v_dir' : '',
   'tiles_satellite_dir' : '',   //卫星图的地址，为空默认在 offlinemap/tiles_satellite/ 目录
   'tiles_road_dir' : '',   		//图片路网的地址，为空默认在 offlinemap/tiles_road/ 目录

@@ -2,7 +2,7 @@
  * @Anthor: liangshuang15
  * @Description: 
  * @Date: 2022-09-19 10:29:48
- * @LastEditTime: 2022-09-23 16:35:48
+ * @LastEditTime: 2022-10-14 17:59:40
  * @FilePath: /wbmanageTool/manage-tool/src/components/Layout.vue
 -->
 <template>
@@ -82,6 +82,8 @@
         fetchService(params).then(res => {
           const list = res.list || [];
           this.menus = list;
+        }).catch(err => {
+          console.log(err)
         })
       },
       handleSelect(key) {

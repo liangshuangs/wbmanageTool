@@ -2,7 +2,7 @@
  * @Anthor: liangshuang15
  * @Description: 
  * @Date: 2022-09-20 15:30:06
- * @LastEditTime: 2022-10-13 14:26:42
+ * @LastEditTime: 2022-10-14 17:58:59
  * @FilePath: /wbmanageTool/manage-tool/src/components/Setting.vue
 -->
 <template>
@@ -204,6 +204,8 @@ export default {
       fetchService(params).then((res) => {
         this.pointData = res.list || [];
         this.pwd = res.list[0] && res.list[0].pwd;
+      }).catch(err => {
+        console.log(err)
       });
     },
     // 编辑节点
