@@ -424,28 +424,24 @@
     for (monitor of monitorMap.values()) {
       if (monitor.baseStationId == baseStation.id) {
         showMenu = true;
-        htmlText.push(`<li><div class='left' onclick="handleOpenVideo(monitor, baseStation)">${monitor.name}</div></li>`)
-        // menu.addItem(new BMapGL.MenuItem(monitor.name,
-        //   function (id) {
-        //     return function () {
-        //       window.openVideo(id);
-        //     }
-        //   }(monitor.id), 100));
+        htmlText.push(`<li onclick="handleOpenVideo(${monitor.id, baseStation.id})"><div class='left'>${monitor.name}</div></li>`)
       }
     }
-    htmlText.push(`<li><div class='left' onclick="handleShowTrackDialog(baseStation)">轨迹</div></li>`);
+    htmlText.push(`<li onclick="handleShowTrackDialog(${baseStation.id})"><div class='left'>轨迹</div></li>`);
     showMenu = true;
     if (showMenu) {
       showInfoBox(baseStation, htmlText, baseStation.marker);
     }
   }
 
-  function handleOpenVideo(monitor, baseStation) {
-    window.openVideo(monitor.id);
+  function handleOpenVideo(monitorid, baseStationid) {
+    var baseStation = baseStationMap.get(baseStationid);
+    window.openVideo(monitorid);
     baseStation.infoBox && baseStation.infoBox.close();
   }
 
-  function handleShowTrackDialog (baseStation) {
+  function handleShowTrackDialog (baseStationid) {
+    let baseStation = baseStationMap.get(baseStationid);
     window.showTrackDialog(baseStation.ip, baseStation.name);
     baseStation.infoBox && baseStation.infoBox.close();
   }
@@ -639,7 +635,7 @@
         marker.infoBox.close();
       }
       var htmlText = [];
-      htmlText.push(`<li><div class='left' onclick="handleDelImgIconFromMap(${marker.id})">删除图标</div></li>`);
+      htmlText.push(`<li onclick="handleDelImgIconFromMap(${marker.id})"><div class='left'>删除图标</div></li>`);
       showInfoBox('', htmlText, marker);
     });
     imageMap.set(marker.id, marker);

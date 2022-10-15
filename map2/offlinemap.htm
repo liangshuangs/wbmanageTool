@@ -418,28 +418,24 @@
     for (monitor of monitorMap.values()) {
       if (monitor.baseStationId == baseStation.id) {
         showMenu = true;
-        htmlText.push(`<li><div class='left' onclick="handleOpenVideo(monitor, baseStation)">${monitor.name}</div></li>`)
-        // menu.addItem(new BMapGL.MenuItem(monitor.name,
-        //   function (id) {
-        //     return function () {
-        //       window.openVideo(id);
-        //     }
-        //   }(monitor.id), 100));
+        htmlText.push(`<li onclick="handleOpenVideo(${monitor.id, baseStation.id})"><div class='left'>${monitor.name}</div></li>`)
       }
     }
-    htmlText.push(`<li><div class='left' onclick="handleShowTrackDialog(baseStation)">轨迹</div></li>`);
+    htmlText.push(`<li onclick="handleShowTrackDialog(${baseStation.id})"><div class='left'>轨迹</div></li>`);
     showMenu = true;
     if (showMenu) {
       showInfoBox(baseStation, htmlText, baseStation.marker);
     }
   }
 
-  function handleOpenVideo(monitor, baseStation) {
-    window.openVideo(monitor.id);
+  function handleOpenVideo(monitorid, baseStationid) {
+    var baseStation = baseStationMap.get(baseStationid);
+    window.openVideo(monitorid);
     baseStation.infoBox && baseStation.infoBox.close();
   }
 
-  function handleShowTrackDialog (baseStation) {
+  function handleShowTrackDialog (baseStationid) {
+    let baseStation = baseStationMap.get(baseStationid);
     window.showTrackDialog(baseStation.ip, baseStation.name);
     baseStation.infoBox && baseStation.infoBox.close();
   }
@@ -633,7 +629,7 @@ var i = 0
         marker.infoBox.close();
       }
       var htmlText = [];
-      htmlText.push(`<li><div class='left' onclick="handleDelImgIconFromMap(${marker.id})">删除图标</div></li>`);
+      htmlText.push(`<li onclick="handleDelImgIconFromMap(${marker.id})"><div class='left'>删除图标</div></li>`);
       showInfoBox('', htmlText, marker);
     });
     imageMap.set(marker.id, marker);
@@ -810,7 +806,7 @@ var i = 0
     // var updateBaseStationSignalJson = '[{"id":10952001,"num":"1","name":"节点1","ip":"192.168.1.1","mac":"01:01:01:01:01:01","signalArray":[{"mac":"01:01:01:01:01:02","intensity":-95},{"mac":"01:01:01:01:01:03","intensity":-95}]},{"id":72,"num":"2","name":"节点2","ip":"192.168.1.2","mac":"01:01:01:01:01:02","signalArray":[{"mac":"01:01:01:01:01:01","intensity":-33},{"mac":"01:01:01:01:01:03","intensity":-33}]},{"id":22,"num":"3","name":"节点3","ip":"192.168.1.3","mac":"01:01:01:01:01:03","signalArray":[{"mac":"01:01:01:01:01:01","intensity":-33},{"mac":"01:01:01:01:01:02","intensity":-33}]}]';
     // var updateBaseStationMapJson = '[{"id":10952001,"num":"1","name":"节点1","ip":"192.168.1.1","mac":"01:01:01:01:01:01"},{"id":72,"num":"2","name":"节点2","ip":"192.168.1.2","mac":"01:01:01:01:01:02"},{"id":22,"num":"3","name":"节点3","ip":"192.168.1.3","mac":"01:01:01:01:01:03"}]'
     // updateBaseStationMap(updateBaseStationMapJson);
-    // var trackJson = '[{"id":127650,"ip":"192.168.1.2","longitude":"116.400100","latitude":39.905},{"id":127654,"ip":"192.168.1.2","longitude":"116.400300","latitude":39.905},{"id":127660,"ip":"192.168.1.2","longitude":"116.400600","latitude":39.905},{"id":127664,"ip":"192.168.1.2","longitude":"116.400800","latitude":39.905},{"id":127670,"ip":"192.168.1.2","longitude":"116.401100","latitude":39.905},{"id":127672,"ip":"192.168.1.2","longitude":"116.401300","latitude":39.905},{"id":127675,"ip":"192.168.1.2","longitude":"116.401600","latitude":39.905},{"id":127678,"ip":"192.168.1.2","longitude":"116.401900","latitude":39.905},{"id":127680,"ip":"192.168.1.2","longitude":"116.402100","latitude":39.905}]';
+    // var trackJson = '[{"id":137871,"ip":"192.168.1.3","longitude":116.4011,"latitude":39.91},{"id":137875,"ip":"192.168.1.3","longitude":116.4013,"latitude":39.91},{"id":137881,"ip":"192.168.1.3","longitude":116.4016,"latitude":39.91},{"id":137887,"ip":"192.168.1.3","longitude":116.4019,"latitude":39.91},{"id":137895,"ip":"192.168.1.3","longitude":116.4001,"latitude":39.91},{"id":137899,"ip":"192.168.1.3","longitude":116.4003,"latitude":39.91},{"id":137905,"ip":"192.168.1.3","longitude":116.4006,"latitude":39.91},{"id":137909,"ip":"192.168.1.3","longitude":116.4008,"latitude":39.91}]';
     // showTrack(trackJson);
   var timer = setInterval(function () {
     // updateBaseStationSignal(updateBaseStationSignalJson);
