@@ -2,7 +2,7 @@
  * @Anthor: liangshuang15
  * @Description: 
  * @Date: 2022-10-11 11:50:18
- * @LastEditTime: 2022-10-15 15:56:32
+ * @LastEditTime: 2022-10-15 16:12:31
  * @FilePath: /wbmanageTool/manage-tool/src/view/Map/onlineMap.vue
 -->
 <template>
@@ -626,7 +626,7 @@ ul li {
   flex-direction: column;
 }
 
-li + li {
+.infoBoxContent li + .infoBoxContent li {
   border-bottom: 1px solid rgba(0, 0, 0, 0.4);
 }
 .infoBoxContent .list ul li {

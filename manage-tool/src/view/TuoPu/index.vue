@@ -2,7 +2,7 @@
  * @Anthor: liangshuang15
  * @Description: 
  * @Date: 2022-09-19 11:46:59
- * @LastEditTime: 2022-10-13 12:06:55
+ * @LastEditTime: 2022-10-15 16:32:57
  * @FilePath: /wbmanageTool/manage-tool/src/view/TuoPu/index.vue
 -->
 <template>
@@ -77,8 +77,8 @@
       :visible="+showSettingModal === 3"
       @close="showSettingModal = ''"
     >
-      <el-form :model="setMeshtting">
-        <el-form-item label="MESH工作频率-信道" label-width="145px">
+      <el-form :model="setMeshtting" ref="setMeshRef">
+        <el-form-item label="MESH工作频率-信道" label-width="145px" :prop="setMeshtting.channel">
           <el-select
             class="setting-select"
             v-model="setMeshtting.channel"
@@ -92,7 +92,7 @@
             ></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="MESH工作频率-频宽" label-width="145px">
+        <el-form-item label="MESH工作频率-频宽" label-width="145px" :prop="setMeshtting.frequency">
           <el-select
             class="setting-select"
             v-model="setMeshtting.frequency"
@@ -106,7 +106,7 @@
             ></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="">
+        <el-form-item label="" :prop="setMeshtting.is_all">
           <el-switch v-model="setMeshtting.is_all"  active-text="一键调频" active-value=1 inactive-value=0> </el-switch>
           <!-- <el-radio-group v-model="setMeshtting.is_all">
             <el-radio label="一键调频"></el-radio>
@@ -124,23 +124,23 @@ import { fetchService } from "../../fetch";
 import Graph from "../../components/Graph.vue";
 import { API } from "../../api";
 const channel = [
-  { label: "1(1410 MHz)", value: 0 },
-  { label: "2(1415 MHz)", value: 1 },
-  { label: "3(1420 MHz)", value: 2 },
-  { label: "4(1425 MHz)", value: 3 },
-  { label: "5(1430 MHz)", value: 4 },
-  { label: "6(1435 MHz)", value: 5 },
-  { label: "7(1440 MHz)", value: 6 },
-  { label: "8(1445 MHz)", value: 7 },
-  { label: "9(1450 MHz)", value: 8 },
-  { label: "10(1455 MHz)", value: 9 },
-  { label: "11(1460 MHz)", value: 10 },
+  { label: "1(1410 MHz)", value: '1' },
+  { label: "2(1415 MHz)", value: '2' },
+  { label: "3(1420 MHz)", value: '3' },
+  { label: "4(1425 MHz)", value: '4' },
+  { label: "5(1430 MHz)", value: '5' },
+  { label: "6(1435 MHz)", value: '6' },
+  { label: "7(1440 MHz)", value: '7' },
+  { label: "8(1445 MHz)", value: '8' },
+  { label: "9(1450 MHz)", value: '9' },
+  { label: "10(1455 MHz)", value: '10' },
+  { label: "11(1460 MHz)", value: '11' },
 ];
 const frequency = [
-  { label: "5 MHz", value: 0 },
-  { label: "10 MHz", value: 1 },
-  { label: "20 MHz", value: 2 },
-  { label: "40 MHz", value: 3 },
+  { label: "5 MHz", value: '5' },
+  { label: "10 MHz", value: '10' },
+  { label: "20 MHz", value: '20' },
+  { label: "40 MHz", value: '40' },
 ];
 export default {
   name: "TuoPuCom",
@@ -158,7 +158,7 @@ export default {
       formLabelWidth: "120px",
       tuopuFrom: { num: "", name: "" },
       tuopuSetting: { num1: "", num2: "" },
-      setMeshtting: { channel: "", frequency: "", is_all: 0 },
+      setMeshtting: { channel: '', frequency: '', is_all: '' },
       CHANNEL: channel,
       FREQUENCY: frequency,
       showSettingModal: "", // 1-网络拓扑控制 2-节点设置 3-MESH设置
@@ -181,6 +181,9 @@ export default {
     clearInterval(this.timer);
   },
   methods: {
+    setMeshRef() {
+      this.$refs['setMeshRef'] && this.$refs['setMeshRef'].resetFields();
+    },
     // 获取mesh
     getMesh() {
       const query = this.$route.query || {};
@@ -190,8 +193,8 @@ export default {
       };
       fetchService(params)
         .then((res) => {
-          this.setMeshtting.channel = res.channel;
-          this.setMeshtting.frequency = res.frequency;
+          this.setMeshtting.channel = res.channel + '';
+          this.setMeshtting.frequency = res.frequency + '';
         })
         .catch((err) => {
           this.$message.error(err.msg || "获取mesh失败");
@@ -204,17 +207,27 @@ export default {
         url: `${API.getMesh}/${query.type}`,
         method: "post",
         params: {
-          channel: this.setMeshtting.channel,
-          frequency: this.setMeshtting.frequency,
+          channel: +this.setMeshtting.channel,
+          frequency: +this.setMeshtting.frequency,
           is_all: +this.setMeshtting.is_all,
         },
       };
       fetchService(params)
         .then((res) => {
           this.showSettingModal = "";
+          this.setMeshtting = {
+            channel: '',
+            frequency: '',
+            is_all: ''
+          }
           this.$message.success(res.msg || "设置mesh成功");
         })
         .catch((err) => {
+          this.setMeshtting = {
+            channel: '',
+            frequency: '',
+            is_all: ''
+          };
           this.$message.error(err.msg || "设置mesh失败");
         });
     },

@@ -2,7 +2,7 @@
  * @Anthor: liangshuang15
  * @Description: 
  * @Date: 2022-10-11 11:50:18
- * @LastEditTime: 2022-10-15 15:56:17
+ * @LastEditTime: 2022-10-15 16:12:19
  * @FilePath: /wbmanageTool/manage-tool/src/view/Map/offlineMap.vue
 -->
 <template>
@@ -607,7 +607,7 @@ ul li {
   border-top: none;
   background: #fff;
 }
-li + li {
+.infoBoxContent li + .infoBoxContent li {
   border-bottom: 1px solid rgba(0, 0, 0, 0.4);
 }
 

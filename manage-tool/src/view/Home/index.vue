@@ -2,7 +2,7 @@
  * @Anthor: liangshuang15
  * @Description: 
  * @Date: 2022-09-19 12:21:38
- * @LastEditTime: 2022-10-15 15:36:08
+ * @LastEditTime: 2022-10-15 16:06:13
  * @FilePath: /wbmanageTool/manage-tool/src/view/Home/index.vue
 -->
 <template>
@@ -129,6 +129,7 @@ export default {
 .wrapper {
   display: flex;
   flex-wrap: wrap;
+  justify-content: center;
   width: 100%;
 }
 .graph-item {
