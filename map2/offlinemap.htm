@@ -28,7 +28,7 @@
 
     .infoBoxContent {
       font-size: 12px;
-      border-radius: 10px;
+      min-width: 100px;
     }
 
     .infoBox img {
@@ -36,14 +36,14 @@
     }
 
     .infoBoxContent .list {
-      min-width: 50px;
       border-top: none;
       background: #fff;
-      min-height: 50px;
     }
-
+    li + li {
+      border-bottom: 1px solid rgba(0, 0, 0, 0.4);
+    }
     .infoBoxContent .list:hover {
-      color: blue;
+      color: rgba(27, 142, 236, 1);
     }
 
     .infoBoxContent .list ul {
@@ -340,7 +340,7 @@
       name = baseStation.ip;
     }
     var label = new BMapGL.Label(name, {
-      offset: new BMapGL.Size(18, 36)
+      offset: new BMapGL.Size(0, 20)
     });
     label.setStyle({
       transform: "translateX(-50%)", color: "black",
@@ -627,8 +627,7 @@ var i = 0
     marker.addEventListener('rightclick', function () {
       if (marker.infoBox) {
         marker.infoBox.close();
-      }
-      var htmlText = [];
+      }      var htmlText = [];
       htmlText.push(`<li onclick="handleDelImgIconFromMap(${marker.id})"><div class='left'>删除图标</div></li>`);
       showInfoBox('', htmlText, marker);
     });
@@ -774,8 +773,6 @@ var i = 0
       boxStyle: {
         background: "#fff",
         minWidth: "50px",
-        minHeight: "50px",
-        borderRadius: "10px"
       },
       align: INFOBOX_AT_BOTTOM,
       offset: new BMapGL.Size(30, 30)

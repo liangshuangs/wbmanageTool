@@ -2,7 +2,7 @@
  * @Anthor: liangshuang15
  * @Description: 
  * @Date: 2022-10-11 11:50:18
- * @LastEditTime: 2022-10-12 19:46:32
+ * @LastEditTime: 2022-10-15 14:01:40
  * @FilePath: /wbmanageTool/manage-tool/src/view/Map/onlineMap.vue
 -->
 <template>
@@ -211,7 +211,7 @@ export default {
         name = baseStation.ip;
       }
       var label = new window.BMapGL.Label(name, {
-        offset: new window.BMapGL.Size(18, 36),
+        offset: new window.BMapGL.Size(0, 20),
       });
       label.setStyle({
         transform: "translateX(-50%)",
@@ -492,7 +492,7 @@ export default {
       let htmlText = [];
       let ref = baseStation.mac;
       htmlText.push(
-        `<li><div class='left' onclick=handleShowTrackDialog("${ref}")>轨迹</div></li>`
+        `<li onclick=handleShowTrackDialog("${ref}")><div class='left'>轨迹</div></li>`
       );
       dynamicLoadScript(
         "//mapopen.bj.bcebos.com/github/BMapGLLib/InfoBox/src/InfoBox.js"
@@ -582,8 +582,6 @@ export default {
         boxStyle: {
           background: "#fff",
           minWidth: "50px",
-          minHeight: "50px",
-          borderRadius: "10px",
         },
         align: window.INFOBOX_AT_BOTTOM,
         offset: new window.BMapGL.Size(30, 30),
@@ -605,7 +603,7 @@ ul li {
 
 .infoBoxContent {
   font-size: 12px;
-  border-radius: 10px;
+  min-width: 100px;
 }
 
 .infoBox img {
@@ -613,10 +611,9 @@ ul li {
 }
 
 .infoBoxContent .list {
-  min-width: 50px;
   border-top: none;
   background: #fff;
-  min-height: 50px;
+  padding: 5px;
 }
 
 .infoBoxContent .list:hover {
@@ -630,6 +627,9 @@ ul li {
   flex-direction: column;
 }
 
+li + li {
+  border-bottom: 1px solid rgba(0, 0, 0, 0.4);
+}
 .infoBoxContent .list ul li {
   padding: 2px;
 }

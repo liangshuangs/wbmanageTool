@@ -28,7 +28,6 @@
 
     .infoBoxContent {
       font-size: 12px;
-      border-radius: 10px;
     }
 
     .infoBox img {
@@ -39,11 +38,11 @@
       min-width: 50px;
       border-top: none;
       background: #fff;
-      min-height: 50px;
+      min-height: 100px;
     }
 
     .infoBoxContent .list:hover {
-      color: blue;
+      color: rgba(27, 142, 236, 1);
     }
 
     .infoBoxContent .list ul {
@@ -51,6 +50,10 @@
       padding: 2px;
       display: flex;
       flex-direction: column;
+    }
+
+    li + li {
+      border-bottom: 1px solid rgba(0, 0, 0, 0.4);
     }
 
     .infoBoxContent .list ul li {
@@ -344,7 +347,7 @@
       name = baseStation.ip;
     }
     var label = new BMapGL.Label(name, {
-      offset: new BMapGL.Size(18, 36)
+      offset: new BMapGL.Size(0, 20)
     });
     label.setStyle({
       transform: "translateX(-50%)", color: "black",
@@ -787,8 +790,6 @@
       boxStyle: {
         background: "#fff",
         minWidth: "50px",
-        minHeight: "50px",
-        borderRadius: "10px"
       },
       align: INFOBOX_AT_BOTTOM,
       offset: new BMapGL.Size(30, 30)

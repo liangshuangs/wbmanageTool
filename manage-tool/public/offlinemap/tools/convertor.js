@@ -2,7 +2,7 @@
  * @Anthor: liangshuang15
  * @Description: 
  * @Date: 2022-09-28 16:16:13
- * @LastEditTime: 2022-10-14 17:53:54
+ * @LastEditTime: 2022-10-15 13:18:39
  * @FilePath: /wbmanageTool/manage-tool/public/offlinemap/tools/convertor.js
  */
 //2011-7-25
@@ -34,6 +34,8 @@
    let ee = 0.00669342162296594323;
     let x_pi = 3.14159265358979324 * 3000.0 / 180.0;
     function wgs2gcj (lat, lon) {
+        lat = Number(lat);
+        lon = Number(lon);
         var dLat = transformLat(lon - 105.0, lat - 35.0);
         var dLon = transformLon(lon - 105.0, lat - 35.0);
         var radLat = lat / 180.0 * pi;

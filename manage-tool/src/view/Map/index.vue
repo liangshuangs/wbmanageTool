@@ -2,7 +2,7 @@
  * @Anthor: liangshuang15
  * @Description: 
  * @Date: 2022-10-11 11:34:47
- * @LastEditTime: 2022-10-12 19:39:16
+ * @LastEditTime: 2022-10-14 23:53:42
  * @FilePath: /wbmanageTool/manage-tool/src/view/Map/index.vue
 -->
 <template>
@@ -32,7 +32,7 @@ export default {
       },
       showGuiji: false, // 显示轨迹
       showTuoPu: false, // 显示拓扑
-      mapOnlineType: false,
+      mapOnlineType: true,
       monitorMap: new Map(),
       baseStationMap: new Map(), // 基站信息
     };

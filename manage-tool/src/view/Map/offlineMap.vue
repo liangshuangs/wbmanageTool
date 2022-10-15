@@ -2,7 +2,7 @@
  * @Anthor: liangshuang15
  * @Description: 
  * @Date: 2022-10-11 11:50:18
- * @LastEditTime: 2022-10-14 18:04:14
+ * @LastEditTime: 2022-10-15 14:10:00
  * @FilePath: /wbmanageTool/manage-tool/src/view/Map/offlineMap.vue
 -->
 <template>
@@ -215,7 +215,7 @@ export default {
         name = baseStation.ip;
       }
       var label = new window.BMapGL.Label(name, {
-        offset: new window.BMapGL.Size(18, 36),
+        offset: new window.BMapGL.Size(0, 20),
       });
       label.setStyle({
         transform: "translateX(-50%)",
@@ -381,8 +381,8 @@ export default {
     },
     moveBaseStation(baseStation) {
       let point = window.BMapGL.Convertor.translate(
-        baseStation.longitude,
-        baseStation.latitude
+        baseStation.latitude,
+        baseStation.longitude
       );
       baseStation.marker.setPosition(point);
       baseStation.customOverlay &&
@@ -495,7 +495,7 @@ export default {
         `<li><div class='left' onclick=handleShowTrackDialog("${ref}")>轨迹</div></li>`
       );
       dynamicLoadScript(
-        "//mapopen.bj.bcebos.com/github/BMapGLLib/InfoBox/src/InfoBox.js"
+        "/offlinemap/tools/infoBox.js"
       ).then(() => {
         this.showInfoBox(baseStation, htmlText);
       });
@@ -576,8 +576,6 @@ export default {
         boxStyle: {
           background: "#fff",
           minWidth: "50px",
-          minHeight: "50px",
-          borderRadius: "10px",
         },
         align: window.INFOBOX_AT_BOTTOM,
         offset: new window.BMapGL.Size(30, 30),
@@ -599,7 +597,6 @@ ul li {
 
 .infoBoxContent {
   font-size: 12px;
-  border-radius: 10px;
 }
 
 .infoBox img {
@@ -607,10 +604,12 @@ ul li {
 }
 
 .infoBoxContent .list {
-  min-width: 50px;
+  min-width: 100px;
   border-top: none;
   background: #fff;
-  min-height: 50px;
+}
+li + li {
+  border-bottom: 1px solid rgba(0, 0, 0, 0.4);
 }
 
 .infoBoxContent .list:hover {
