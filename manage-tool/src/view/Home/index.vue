@@ -2,7 +2,7 @@
  * @Anthor: liangshuang15
  * @Description: 
  * @Date: 2022-09-19 12:21:38
- * @LastEditTime: 2022-10-15 23:25:32
+ * @LastEditTime: 2022-10-15 23:30:23
  * @FilePath: /wbmanageTool/manage-tool/src/view/Home/index.vue
 -->
 <template>
@@ -156,6 +156,7 @@ export default {
   text-align: left;
   font-weight: 500;
   font-size: 16px;
+  font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
   padding-left: 10px;
 }
 .info-wrapper {

@@ -2,7 +2,7 @@
  * @Anthor: liangshuang15
  * @Description: 
  * @Date: 2022-09-20 15:30:06
- * @LastEditTime: 2022-10-15 23:16:51
+ * @LastEditTime: 2022-10-15 23:29:46
  * @FilePath: /wbmanageTool/manage-tool/src/components/Setting.vue
 -->
 <template>
