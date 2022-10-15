@@ -60,6 +60,9 @@
     .infoBoxContent .list ul .last {
       border: none;
     }
+    .BMap_noprint .anchorBR {
+      top: 85px !important;
+    }
   </style>
     <script src="./static/offlinemap/map_load.js"></script>
     <script src="./static/offlinemap/customstyle/stylejson.js"></script>
@@ -82,7 +85,9 @@
   map.addControl(new BMapGL.NavigationControl());
   map.addControl(new BMapGL.ScaleControl());
   map.enableScrollWheelZoom(true);
-  var navi3DCtrl = new BMapGL.NavigationControl3D();
+  var navi3DCtrl = new BMapGL.NavigationControl3D({
+    anchor: BMAP_ANCHOR_TOP_RIGHT
+  });
   map.addControl(navi3DCtrl);
 
   var gps = {};

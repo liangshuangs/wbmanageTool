@@ -2,7 +2,7 @@
  * @Anthor: liangshuang15
  * @Description: 
  * @Date: 2022-10-11 11:50:18
- * @LastEditTime: 2022-10-15 16:12:19
+ * @LastEditTime: 2022-10-15 17:55:40
  * @FilePath: /wbmanageTool/manage-tool/src/view/Map/offlineMap.vue
 -->
 <template>
@@ -239,6 +239,7 @@ export default {
         marker.addEventListener("dragging", (e) => {
           baseStation.longitude = e.point.lng;
           baseStation.latitude = e.point.lat;
+          baseStation.isGetGPS = true;
           baseStation.customOverlay.setPosition(e.point);
         });
         marker.addEventListener("dragend", (e) => {
@@ -285,7 +286,7 @@ export default {
             baseStation.customOverlay.setPosition(pt);
             x -= 80;
           }
-          if (!baseStation.latitude || !baseStation.longitude) {
+          if (!baseStation.latitude || !baseStation.longitude || baseStation.isGetGPS) {
             let icon = new window.BMapGL.Icon(
               "assets/base_station_red.png",
               new window.BMapGL.Size(35, 35)
@@ -368,6 +369,7 @@ export default {
       let baseStation = this.baseStationMap.get(mac);
       baseStation.longitude = longitude;
       baseStation.latitude = latitude;
+      baseStation.isGetGPS = false;
       baseStation.time = new Date();
       this.moveBaseStation(baseStation);
       if (this.gps.resetCenter) {
@@ -582,6 +584,10 @@ export default {
       baseStation.infoBox = infoBox;
       infoBox.open(baseStation.marker);
     },
+    handleDistanceToolFn() {
+      let distance = new window.BMapGLLib.DistanceTool(this.map);
+      distance.open();
+    }
   },
 };
 </script>

@@ -2,7 +2,7 @@
  * @Anthor: liangshuang15
  * @Description: 
  * @Date: 2022-10-11 11:34:47
- * @LastEditTime: 2022-10-15 14:32:40
+ * @LastEditTime: 2022-10-15 17:24:15
  * @FilePath: /wbmanageTool/manage-tool/src/view/Map/index.vue
 -->
 <template>
@@ -11,6 +11,7 @@
       <div class="info-item" @click="handleClearGuiji">清除轨迹</div>
       <div class="info-item" @click="handleTuoPu">{{ showTuoPu ? '隐藏拓扑': '显示拓扑' }}</div>
       <div class="info-item" @click="handleMapType">{{mapOnlineType ? '在线': '离线'  }}</div>
+      <div class="info-item" @click="handleDistanceTool">测距</div>
     </div>
     <online-map ref="online" :showTuoPu="showTuoPu" v-if="mapOnlineType"></online-map>
     <offline-map ref="offline" :showTuoPu="showTuoPu" v-else></offline-map>
@@ -66,6 +67,17 @@ export default {
     handleTuoPu() {
        this.handleClearGuiji();
         this.showTuoPu = !this.showTuoPu; 
+    },
+    // 测试距离
+    handleDistanceTool() {
+      const onlineRefs = this.$refs['online'];
+      const offlineRefs = this.$refs['offline'];
+      if (offlineRefs) {
+          offlineRefs.handleDistanceToolFn && offlineRefs.handleDistanceToolFn();
+        }
+        if (onlineRefs) {
+          onlineRefs.handleDistanceToolFn && onlineRefs.handleDistanceToolFn();
+        }
     }
   },
 };

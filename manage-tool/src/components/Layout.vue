@@ -2,13 +2,13 @@
  * @Anthor: liangshuang15
  * @Description: 
  * @Date: 2022-09-19 10:29:48
- * @LastEditTime: 2022-10-14 17:59:40
+ * @LastEditTime: 2022-10-15 17:20:47
  * @FilePath: /wbmanageTool/manage-tool/src/components/Layout.vue
 -->
 <template>
     <el-container>
       <el-header>
-        <div class="header-title">迈实科技</div>
+        <div class="header-title">迈实技术</div>
         <div @click="this.handleSetting" class="header-set"><Button>设置</Button></div>
       </el-header>
       <el-container>
@@ -99,6 +99,19 @@
     },
   };
   </script>
+  <style>
+    .el-menu-vertical-demo {
+      text-align: left;
+      font-size: 16px !important;
+    }
+    .el-submenu__title {
+      font-size: 16px !important;
+    }
+    .el-menu-item, .el-submenu {
+      text-align: left;
+      font-size: 16px !important;
+    }
+  </style>
   <style scoped>
   .el-header {
     background-color: #b3c0d1;
@@ -120,5 +133,9 @@
     text-align: center;
     height: calc(100vh - 60px);
     padding: 0 !important;
+  }
+  .header-title {
+    font-weight: 500;
+    font-size: 30px;
   }
   </style>

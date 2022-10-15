@@ -2,7 +2,7 @@
  * @Anthor: liangshuang15
  * @Description: 
  * @Date: 2022-09-19 12:21:38
- * @LastEditTime: 2022-10-15 16:06:13
+ * @LastEditTime: 2022-10-15 17:50:56
  * @FilePath: /wbmanageTool/manage-tool/src/view/Home/index.vue
 -->
 <template>
@@ -27,8 +27,8 @@
       </el-table>
     </div>
     <div class="offline-point">
-      <div class="offline-title">离线节点</div>
-      <div v-for="(item, index) in offlinePointArray" :key="index" :index="index"> {{item}}</div>
+      <div class="offline-title">告警信息</div>
+      <div class="info" v-for="(item, index) in offlinePointArray" :key="index" :index="index"> {{item}}</div>
     </div>
   </div>
 </template>
@@ -146,5 +146,9 @@ export default {
 .offline-title {
   text-align: left;
   font-weight: 500;
+  font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+}
+.info {
+  color: red;
 }
 </style>
