@@ -784,11 +784,10 @@
   }
 
   function showInfoBox(baseStation, htmlText, marker) {
-    //  "<li><div class='left'>节点2</div></li>",
     var html = ["<div class='infoBoxContent'><div class='list'><ul>"];
       html = html.concat(htmlText);
     html.push("</ul></div>", "</div>");
-    infoBox = new windodw.BMapGLLib.InfoBox(map, html.join(""), {
+    infoBox = new BMapGLLib.InfoBox(map, html.join(""), {
       boxStyle: {
         background: "#fff",
         minWidth: "50px",
