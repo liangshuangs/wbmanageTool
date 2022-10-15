@@ -2,14 +2,13 @@
  * @Anthor: liangshuang15
  * @Description: 
  * @Date: 2022-09-19 20:17:58
- * @LastEditTime: 2022-10-15 13:51:34
+ * @LastEditTime: 2022-10-15 14:14:07
  * @FilePath: /wbmanageTool/manage-tool/src/fetch.js
  */
 import axios from 'axios';
 import { getCookie } from './util';
 export function fetchService(params) {
   const url = window.myHost + params.url;
-  // const url = params.url;
   const data = params.params || {};
   const method = params.method || 'get';
   const token = getCookie('TOKEN');

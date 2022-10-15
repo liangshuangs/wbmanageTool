@@ -2,14 +2,12 @@
  * @Anthor: liangshuang15
  * @Description: 
  * @Date: 2022-09-23 15:37:34
- * @LastEditTime: 2022-10-11 16:17:18
+ * @LastEditTime: 2022-10-15 14:17:45
  * @FilePath: /wbmanageTool/manage-tool/src/util.js
  */
 import CryptoJS from "crypto-js";
 export const setCookie = (name, value) => {
-  const date = new Date();
-  date.setTime(date.getTime() + 2 * 24 * 3600 * 1000);
-  document.cookie = `${name}=` + value + ';expires=' + date.toGMTString() + ';path=/';
+  sessionStorage.setItem(name, value);
 };
 export const getCookies = () => {
   try {
@@ -31,7 +29,7 @@ export const getCookies = () => {
 };
 
 export const getCookie = name => {
-  return getCookies()[name];
+  return sessionStorage.getItem(name);
 };
 // 获取随机数
 export const getRandomString = (len = 24) => {
