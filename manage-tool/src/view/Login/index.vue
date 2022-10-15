@@ -2,7 +2,7 @@
  * @Anthor: liangshuang15
  * @Description: 
  * @Date: 2022-09-22 15:31:38
- * @LastEditTime: 2022-10-13 12:21:40
+ * @LastEditTime: 2022-10-15 18:25:56
  * @FilePath: /wbmanageTool/manage-tool/src/view/Login/index.vue
 -->
 <template>
@@ -26,7 +26,7 @@
           </el-form-item>
           <el-form-item>
             <el-button type="primary" @click="submitForm('Form')"
-              >登陆</el-button
+              >登录</el-button
             >
           </el-form-item>
         </el-form>

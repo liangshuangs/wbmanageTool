@@ -2,7 +2,7 @@
  * @Anthor: liangshuang15
  * @Description: 
  * @Date: 2022-09-20 15:30:06
- * @LastEditTime: 2022-10-15 15:02:53
+ * @LastEditTime: 2022-10-15 18:24:28
  * @FilePath: /wbmanageTool/manage-tool/src/components/Setting.vue
 -->
 <template>
@@ -14,7 +14,7 @@
   >
     <div slot="title" class="dialog-title">
       <el-button @click="showPointSetting = false" plain>用户设置</el-button>
-      <el-button @click="showPointSetting = true" plain>结点设置</el-button>
+      <el-button @click="showPointSetting = true" plain>分组设置</el-button>
     </div>
     <div class="setting-wrapper">
       <div class="setting-contnet">

@@ -2,7 +2,7 @@
  * @Anthor: liangshuang15
  * @Description: 
  * @Date: 2022-09-19 12:21:38
- * @LastEditTime: 2022-10-15 17:50:56
+ * @LastEditTime: 2022-10-15 19:39:35
  * @FilePath: /wbmanageTool/manage-tool/src/view/Home/index.vue
 -->
 <template>
@@ -21,9 +21,9 @@
         :data="item.data"
         style="width: 95%"
       >
-        <el-table-column prop="num" label="编号"> </el-table-column>
-        <el-table-column prop="name" label="名称"> </el-table-column>
-        <el-table-column prop="ip" label="ip"> </el-table-column>
+        <el-table-column prop="num" label="节点编号"> </el-table-column>
+        <el-table-column prop="name" label="节点名称"> </el-table-column>
+        <el-table-column prop="ip" label="节点IP"> </el-table-column>
       </el-table>
     </div>
     <div class="offline-point">
@@ -146,7 +146,9 @@ export default {
 .offline-title {
   text-align: left;
   font-weight: 500;
+  font-size: 16px;
   font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+  padding-left: 10px;
 }
 .info {
   color: red;

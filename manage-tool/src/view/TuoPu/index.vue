@@ -2,7 +2,7 @@
  * @Anthor: liangshuang15
  * @Description: 
  * @Date: 2022-09-19 11:46:59
- * @LastEditTime: 2022-10-15 16:32:57
+ * @LastEditTime: 2022-10-15 19:57:03
  * @FilePath: /wbmanageTool/manage-tool/src/view/TuoPu/index.vue
 -->
 <template>
@@ -15,14 +15,16 @@
       <el-button plain @click="handleFastStart(1)">系统完全启动</el-button>
     </div>
     <Graph :graphData="tableData" />
-    <el-table size="small" :border="true" :data="tableData" style="width: 100%">
-      <el-table-column prop="num" label="编号" width="180"> </el-table-column>
-      <el-table-column prop="name" label="名称" width="180"> </el-table-column>
-      <el-table-column prop="ip" label="ip"> </el-table-column>
-      <el-table-column prop="mac" label="mac"> </el-table-column>
+    <div class="table-wrapper">
+      <el-table cell-class-name="tuopu-cel" size="small" :border="true" :data="tableData" style="width: 80%">
+      <el-table-column prop="num" label="节点编号" width="180"> </el-table-column>
+      <el-table-column prop="name" label="节点名称" width="180"> </el-table-column>
+      <el-table-column prop="ip" label="节点IP" width="180"> </el-table-column>
+      <el-table-column prop="mac" label="节点MAC"> </el-table-column>
+      <el-table-column prop="latLon" label="节点经纬度"> </el-table-column>
     </el-table>
     <br />
-    <el-table size="small" :border="true" :data="watchData" style="width: 100%">
+    <el-table size="small" :border="true" :data="watchData" style="width: 80%">
       <el-table-column
         v-for="(item, index) in tableColumns"
         :key="index"
@@ -31,6 +33,7 @@
       >
       </el-table-column>
     </el-table>
+    </div>
     <!-- 网络拓扑控制 -->
     <el-dialog
       width="40%"
@@ -124,17 +127,17 @@ import { fetchService } from "../../fetch";
 import Graph from "../../components/Graph.vue";
 import { API } from "../../api";
 const channel = [
-  { label: "1(1410 MHz)", value: '1' },
-  { label: "2(1415 MHz)", value: '2' },
-  { label: "3(1420 MHz)", value: '3' },
-  { label: "4(1425 MHz)", value: '4' },
-  { label: "5(1430 MHz)", value: '5' },
-  { label: "6(1435 MHz)", value: '6' },
-  { label: "7(1440 MHz)", value: '7' },
-  { label: "8(1445 MHz)", value: '8' },
-  { label: "9(1450 MHz)", value: '9' },
-  { label: "10(1455 MHz)", value: '10' },
-  { label: "11(1460 MHz)", value: '11' },
+  { label: "频点1", value: '1' },
+  { label: "频点2", value: '2' },
+  { label: "频点3", value: '3' },
+  { label: "频点4", value: '4' },
+  { label: "频点5", value: '5' },
+  { label: "频点6", value: '6' },
+  { label: "频点7", value: '7' },
+  { label: "频点8", value: '8' },
+  { label: "频点9", value: '9' },
+  { label: "频点10", value: '10' },
+  { label: "频点11", value: '11' },
 ];
 const frequency = [
   { label: "5 MHz", value: '5' },
@@ -301,6 +304,7 @@ export default {
         let watchData = []; // 观察数据
         this.tableData.map((item) => {
           let watchColumn = { label: item.num + "", prop: item.mac }; // 处理列名
+          item.latLon = '经纬度';
           watchColumns.push(watchColumn);
           // 处理观察数据
           let watchDataItem = { num: item.num + "" }; // 观察数据
@@ -326,5 +330,16 @@ export default {
 }
 .setting-select {
   width: 100%;
+}
+.table-wrapper {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+</style>
+<style>
+  .cell {
+  text-align: center;
 }
 </style>
