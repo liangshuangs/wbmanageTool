@@ -2,11 +2,11 @@
  * @Anthor: liangshuang15
  * @Description: 
  * @Date: 2022-10-11 11:34:47
- * @LastEditTime: 2022-10-15 17:24:15
+ * @LastEditTime: 2022-10-15 23:03:55
  * @FilePath: /wbmanageTool/manage-tool/src/view/Map/index.vue
 -->
 <template>
-  <div>
+  <div  v-loading="loading">
     <div class="info">
       <div class="info-item" @click="handleClearGuiji">清除轨迹</div>
       <div class="info-item" @click="handleTuoPu">{{ showTuoPu ? '隐藏拓扑': '显示拓扑' }}</div>
@@ -24,6 +24,7 @@ export default {
   name: "MapCom",
   data() {
     return {
+      loading: false,
       map: null,
       gps: {
         longitude: 0,
@@ -41,6 +42,20 @@ export default {
   components: {
     offlineMap,
     OnlineMap
+  },
+  watch: {
+    $route:{
+      handler() {
+        const type = this.$route.query.type;
+        if (type) {
+          this.loading = true;
+          setTimeout(() => {
+          this.loading = false;
+        }, 500);
+        }
+      },
+      deep: true
+    }
   },
   mounted() {},
   methods: {

@@ -2,7 +2,7 @@
  * @Anthor: liangshuang15
  * @Description: 
  * @Date: 2022-09-19 10:29:48
- * @LastEditTime: 2022-10-13 12:22:07
+ * @LastEditTime: 2022-10-15 19:48:17
  * @FilePath: /wbmanageTool/manage-tool/src/App.vue
 -->
 <template>
@@ -18,3 +18,9 @@ export default {
   }
 };
 </script>
+<style>
+body {
+  margin: 0;
+  padding: 0;
+}
+</style>

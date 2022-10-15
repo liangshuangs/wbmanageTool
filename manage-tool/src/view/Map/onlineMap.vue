@@ -2,7 +2,7 @@
  * @Anthor: liangshuang15
  * @Description: 
  * @Date: 2022-10-11 11:50:18
- * @LastEditTime: 2022-10-15 17:53:13
+ * @LastEditTime: 2022-10-15 23:26:06
  * @FilePath: /wbmanageTool/manage-tool/src/view/Map/onlineMap.vue
 -->
 <template>
@@ -412,7 +412,7 @@ export default {
       for (let baseStation1 of this.baseStationMap.values()) {
         for (let signal of baseStation1.signalMap.values()) {
           for (let baseStation2 of this.baseStationMap.values()) {
-            if (signal.mac == baseStation2.mac) {
+            if (signal.mac === baseStation2.mac) {
               if (baseStation1.marker == null || baseStation2.marker == null) {
                 break;
               }

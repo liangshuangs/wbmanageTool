@@ -2,7 +2,7 @@
  * @Anthor: liangshuang15
  * @Description: 
  * @Date: 2022-09-20 15:30:06
- * @LastEditTime: 2022-10-15 15:02:53
+ * @LastEditTime: 2022-10-15 23:16:51
  * @FilePath: /wbmanageTool/manage-tool/src/components/Setting.vue
 -->
 <template>
@@ -14,7 +14,7 @@
   >
     <div slot="title" class="dialog-title">
       <el-button @click="showPointSetting = false" plain>用户设置</el-button>
-      <el-button @click="showPointSetting = true" plain>结点设置</el-button>
+      <el-button @click="showPointSetting = true" plain>分组设置</el-button>
     </div>
     <div class="setting-wrapper">
       <div class="setting-contnet">
@@ -39,12 +39,9 @@
             </el-table-column>
             <el-table-column fixed="right" label="操作" width="100">
               <template slot-scope="scope">
-                <el-button
-                  @click="handleDelPoint(scope.$index, scope.row)"
-                  type="text"
-                  size="small"
-                  >删除</el-button
-                >
+                <el-popconfirm title="确定删除吗？" @confirm="handleDelPoint(scope.$index, scope.row)">
+                  <el-button type="text" size="small" slot="reference">删除</el-button>
+                </el-popconfirm>
                 <el-button
                   v-show="!scope.row.edit"
                   @click="handleEdit(scope.$index, scope.row)"

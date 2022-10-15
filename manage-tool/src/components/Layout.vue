@@ -2,7 +2,7 @@
  * @Anthor: liangshuang15
  * @Description: 
  * @Date: 2022-09-19 10:29:48
- * @LastEditTime: 2022-10-15 17:20:47
+ * @LastEditTime: 2022-10-15 19:28:59
  * @FilePath: /wbmanageTool/manage-tool/src/components/Layout.vue
 -->
 <template>
@@ -29,16 +29,19 @@
               </template>
             </el-menu-item>
             <el-submenu v-for="item in menus" :key="item.name" :index="item.name">
-              <template slot="title">{{ item.name }}</template>
+              <template slot="title">
+                <i class="el-icon-s-home"></i>
+                <span>{{ item.name }}</span>
+              </template>
               <el-menu-item
                 :route="{path: '/tuopu', query: {type: item.id}}"
                 :index="`${item.name}-1`">
-                拓扑
+                网络拓扑
               </el-menu-item>
               <el-menu-item
                 :route="{path: '/map', query: {type: item.id}}"
                 :index="`${item.name}-2`">
-                地图</el-menu-item>
+                分组地图</el-menu-item>
             </el-submenu>
           </el-menu>
         </el-aside>
@@ -114,18 +117,19 @@
   </style>
   <style scoped>
   .el-header {
-    background-color: #b3c0d1;
-    color: #333;
+    background-color: rgb(75,128,191);
+    color: #fff;
     height: 60px;
     line-height: 60px;
     display: flex;
     justify-content: space-between;
   }
   .el-aside {
-    background-color: #d3dce6;
+    background-color: rgb(75,128,191);
     color: #333;
     text-align: center;
     height: calc(100vh - 60px);
+    width: 250px !important;
   }
   .el-main {
     background-color: #e9eef3;
@@ -137,5 +141,10 @@
   .header-title {
     font-weight: 500;
     font-size: 30px;
+    padding-left: 40px;
+  }
+  .el-submenu .el-menu-item {
+    text-align: center;
+    font-size: 14px !important;
   }
   </style>

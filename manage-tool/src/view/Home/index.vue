@@ -2,7 +2,7 @@
  * @Anthor: liangshuang15
  * @Description: 
  * @Date: 2022-09-19 12:21:38
- * @LastEditTime: 2022-10-15 17:50:56
+ * @LastEditTime: 2022-10-15 23:25:32
  * @FilePath: /wbmanageTool/manage-tool/src/view/Home/index.vue
 -->
 <template>
@@ -21,14 +21,16 @@
         :data="item.data"
         style="width: 95%"
       >
-        <el-table-column prop="num" label="编号"> </el-table-column>
-        <el-table-column prop="name" label="名称"> </el-table-column>
-        <el-table-column prop="ip" label="ip"> </el-table-column>
+        <el-table-column prop="num" label="节点编号" width="80"> </el-table-column>
+        <el-table-column prop="name" label="节点名称"> </el-table-column>
+        <el-table-column prop="ip" label="节点IP"> </el-table-column>
       </el-table>
     </div>
     <div class="offline-point">
       <div class="offline-title">告警信息</div>
-      <div class="info" v-for="(item, index) in offlinePointArray" :key="index" :index="index"> {{item}}</div>
+      <div class="info-wrapper">
+        <div class="info-item" v-for="(item, index) in offlinePointArray" :key="index" :index="index"> {{item}}</div>
+      </div>
     </div>
   </div>
 </template>
@@ -90,14 +92,13 @@ export default {
         if (this.topologyMap.has(item.name)) {
           const oldTopologyList = this.topologyMap.get(item.name);
           // 循环旧的节点，看旧的节点是否都在新的节点里面，如果旧的节点不在新的节点里面，则说明这个节点离线了。
-          
           oldTopologyList.map((oldItem) => {
             const isNewTopologyHas = newTopologyList.find(
               (i) => i.mac === oldItem.mac
             );
             if (!isNewTopologyHas) {
               let time = this.getNowFormatDate();
-              this.offlinePointArray.push(`${item.name}-${oldItem.num}-${oldItem.name}设备离线;离线时间： ${time}`);
+              this.offlinePointArray.unshift(`${item.name}-${oldItem.num}-${oldItem.name}设备离线;离线时间：${time}`);
             }
           });
         }
@@ -135,20 +136,37 @@ export default {
 .graph-item {
   width: calc(100% / 3);
   flex-direction: row;
-  margin-top: 10px;
+  padding-top: 10px;
+  padding-bottom: 10px;
+  background-color: #fff;
+  /* border-bottom-left-radius: 10px;
+  border-bottom-right-radius: 10px; */
 }
 .offline-point {
   width: 100%;
-  min-height: 100px;
-  margin-top: 20px;
+  max-height: 150px;
+  margin-top: 10px;
+  padding-top: 10px;
+  padding-bottom: 10px;
   text-align: left;
+  background-color: #fff;
+  overflow: hidden;
 }
 .offline-title {
   text-align: left;
   font-weight: 500;
-  font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+  font-size: 16px;
+  padding-left: 10px;
 }
-.info {
+.info-wrapper {
+  height: 100px;
+  overflow-y: scroll;
+}
+.info-item {
   color: red;
+  padding-left: 10px;
+}
+.info-item + .info-item {
+  padding-top: 5px;
 }
 </style>
