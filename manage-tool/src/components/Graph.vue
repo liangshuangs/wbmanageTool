@@ -2,7 +2,7 @@
  * @Anthor: liangshuang15
  * @Description: 
  * @Date: 2022-09-21 12:58:16
- * @LastEditTime: 2022-10-13 11:01:17
+ * @LastEditTime: 2022-10-15 15:26:31
  * @FilePath: /wbmanageTool/manage-tool/src/components/Graph.vue
 -->
 <template>
@@ -106,7 +106,7 @@ export default {
           links.push(link);
         });
         nodeData.push({
-          name: item.name,
+          name: item.num + item.name,
           x: points[index].x,
           y: points[index].y,
         });

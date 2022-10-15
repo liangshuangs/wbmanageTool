@@ -2,7 +2,7 @@
  * @Anthor: liangshuang15
  * @Description: 
  * @Date: 2022-09-19 12:21:38
- * @LastEditTime: 2022-10-13 12:04:43
+ * @LastEditTime: 2022-10-15 15:36:08
  * @FilePath: /wbmanageTool/manage-tool/src/view/Home/index.vue
 -->
 <template>
@@ -28,7 +28,7 @@
     </div>
     <div class="offline-point">
       <div class="offline-title">离线节点</div>
-      <div v-for="(item, key, index) in offlinePointObj" :key="index" :index="index"> {{item}}</div>
+      <div v-for="(item, index) in offlinePointArray" :key="index" :index="index"> {{item}}</div>
     </div>
   </div>
 </template>
@@ -47,6 +47,7 @@ export default {
       topologyMap: new Map(), // 拓扑map
       timer: null,
       offlinePointObj: {},
+      offlinePointArray: []
     };
   },
   mounted() {
@@ -88,22 +89,39 @@ export default {
         const newTopologyList = res.List || [];
         if (this.topologyMap.has(item.name)) {
           const oldTopologyList = this.topologyMap.get(item.name);
-          let offlinePointArray = [];
           // 循环旧的节点，看旧的节点是否都在新的节点里面，如果旧的节点不在新的节点里面，则说明这个节点离线了。
+          
           oldTopologyList.map((oldItem) => {
             const isNewTopologyHas = newTopologyList.find(
               (i) => i.mac === oldItem.mac
             );
             if (!isNewTopologyHas) {
-              offlinePointArray.push(`${item.name}-${oldItem.name}设备离线`);
+              let time = this.getNowFormatDate();
+              this.offlinePointArray.push(`${item.name}-${oldItem.num}-${oldItem.name}设备离线;离线时间： ${time}`);
             }
           });
-          this.offlinePointObj[item.name] = offlinePointArray.join(";");
         }
         this.topologyMap.set(item.name, newTopologyList);
         this.$set(this.tuopuData, index, { name: item.name, data: res.List });
       });
     },
+    getNowFormatDate() {
+    var date = new Date();
+    var seperator1 = "-";
+    var seperator2 = ":";
+    var month = date.getMonth() + 1;
+    var strDate = date.getDate();
+    if (month >= 1 && month <= 9) {
+        month = "0" + month;
+    }
+    if (strDate >= 0 && strDate <= 9) {
+        strDate = "0" + strDate;
+    }
+    var currentdate = date.getFullYear() + seperator1 + month + seperator1 + strDate
+            + " " + date.getHours() + seperator2 + date.getMinutes()
+            + seperator2 + date.getSeconds();
+    return currentdate;
+}
   },
 };
 </script>

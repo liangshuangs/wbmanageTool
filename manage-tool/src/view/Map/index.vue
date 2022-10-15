@@ -2,7 +2,7 @@
  * @Anthor: liangshuang15
  * @Description: 
  * @Date: 2022-10-11 11:34:47
- * @LastEditTime: 2022-10-14 23:53:42
+ * @LastEditTime: 2022-10-15 14:32:40
  * @FilePath: /wbmanageTool/manage-tool/src/view/Map/index.vue
 -->
 <template>
@@ -45,6 +45,9 @@ export default {
   methods: {
     // 设置地图离线在线模式
     handleMapType() {
+      this.handleClearGuiji();
+      this.showGuiji = false;
+      this.showTuoPu = false;
         window.BMapGL = null;
         this.mapOnlineType = !this.mapOnlineType;
     },
@@ -52,15 +55,17 @@ export default {
         const onlineRefs = this.$refs['online'];
         const offlineRefs = this.$refs['offline'];
         if (offlineRefs) {
-          offlineRefs.clearTrack();
+          offlineRefs.clearTrack && offlineRefs.clearTrack();
+          offlineRefs.closeInfoBox && offlineRefs.closeInfoBox();
         }
         if (onlineRefs) {
-          onlineRefs.clearTrack();
+          onlineRefs.clearTrack && onlineRefs.clearTrack();
+          onlineRefs.closeInfoBox && onlineRefs.closeInfoBox();
         }
     },
     handleTuoPu() {
-        this.showTuoPu = !this.showTuoPu;
-        
+       this.handleClearGuiji();
+        this.showTuoPu = !this.showTuoPu; 
     }
   },
 };

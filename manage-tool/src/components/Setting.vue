@@ -2,7 +2,7 @@
  * @Anthor: liangshuang15
  * @Description: 
  * @Date: 2022-09-20 15:30:06
- * @LastEditTime: 2022-10-14 17:58:59
+ * @LastEditTime: 2022-10-15 15:02:53
  * @FilePath: /wbmanageTool/manage-tool/src/components/Setting.vue
 -->
 <template>
@@ -76,11 +76,7 @@
               v-model="form2.secret"
             ></el-input>
           </el-form-item>
-          <el-form-item
-            label="新密码"
-            :label-width="formLabelWidth"
-            prop="pwd"
-          >
+          <el-form-item label="新密码" :label-width="formLabelWidth" prop="pwd">
             <el-input
               placeholder="请输入新密码"
               show-password
@@ -96,12 +92,39 @@
         </el-form>
       </div>
     </div>
+    <el-dialog
+      :title="editText"
+      :visible.sync="isEditPont"
+      width="30%"
+      append-to-body
+    >
+      <el-form :model="editPointForm">
+        <el-form-item
+          label="区域名称"
+          label-width="80px"
+          :prop="editPointForm.name"
+        >
+          <el-input v-model="editPointForm.name" autocomplete="off"></el-input>
+        </el-form-item>
+        <el-form-item label="密码" label-width="80px" :prop="editPointForm.pwd">
+          <el-input
+            placeholder="请输入密码"
+            show-password
+            v-model="editPointForm.pwd"
+          ></el-input>
+        </el-form-item>
+      </el-form>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="isEditPont = false">取 消</el-button>
+        <el-button type="primary" @click="handleAddPonit">确 定</el-button>
+      </span>
+    </el-dialog>
   </el-dialog>
 </template>
 <script>
 import { fetchService } from "../fetch";
 import { API } from "../api";
-import { getRandomString, encryptByDES, getKey } from '../util';
+import { getRandomString, encryptByDES, getKey } from "../util";
 export default {
   name: "SettingCom",
   props: {
@@ -112,10 +135,17 @@ export default {
   },
   data() {
     return {
+      editText: "添加节点",
+      isEditPont: false,
       pwd: "",
       dialogFormVisible: false,
       formLabelWidth: "120px",
       showPointSetting: false,
+      editPonitData: null,
+      editPointForm: {
+        secret: "",
+        pwd: "",
+      },
       form2: {
         secret: "",
         pwd: "",
@@ -124,9 +154,7 @@ export default {
         secret: [
           { required: true, message: "请输入原始密码", trigger: "blur" },
         ],
-        pwd: [
-          { required: true, message: "请输入新密码", trigger: "blur" },
-        ],
+        pwd: [{ required: true, message: "请输入新密码", trigger: "blur" }],
       },
       pointData: [],
     };
@@ -155,17 +183,16 @@ export default {
           let randomString = getRandomString(32);
           let text = getKey(randomString, 32); // 随机字符串
           let secret = getKey(this.form2.secret, 24); // 旧密码
-          
+
           const params = {
             url,
-            method: 'put',
+            method: "put",
             params: {
               text: randomString,
               secret: encryptByDES(text, secret), // 旧密码
-              pwd: encryptByDES(this.form2.pwd, secret) // 新密码
+              pwd: encryptByDES(this.form2.pwd, secret), // 新密码
             },
           };
-          console.log(params, 'params');
           fetchService(params)
             .then((res) => {
               this.$message.success(res.msg || "修改密码成功");
@@ -189,34 +216,38 @@ export default {
         method: "DELETE",
         params: {},
       };
-      fetchService(params).then((res) => {
-        this.$message.success(res.msg || "删除结点成功");
-        this.getPoints(); // 更新列表数据
-      }).catch(err => {
-        this.$message.error(err.msg || '失败')
-      });
+      fetchService(params)
+        .then((res) => {
+          this.$message.success(res.msg || "删除结点成功");
+          this.getPoints(); // 更新列表数据
+        })
+        .catch((err) => {
+          this.$message.error(err.msg || "失败");
+        });
     },
     // 获取结点数据
     getPoints() {
       const params = {
         url: API.areaList,
       };
-      fetchService(params).then((res) => {
-        this.pointData = res.list || [];
-        this.pwd = res.list[0] && res.list[0].pwd;
-      }).catch(err => {
-        console.log(err)
-      });
+      fetchService(params)
+        .then((res) => {
+          this.pointData = res.list || [];
+          this.pwd = res.list[0] && res.list[0].pwd;
+        })
+        .catch((err) => {
+          console.log(err);
+        });
     },
     // 编辑节点
     handleEdit(index, row) {
-      this.pointData.map((item) => {
-        if (item.id === row.id) {
-          this.$set(item, "edit", true);
-        } else {
-          this.$set(item, "edit", false);
-        }
-      });
+      this.isEditPont = true;
+      this.editText = "修改节点";
+      this.editPonitData = row;
+      this.editPointForm = {
+        name: row.name,
+        pwd: row.pwd,
+      };
     },
     // 新增 or 修改 结点
     handleSave(index, row) {
@@ -250,8 +281,39 @@ export default {
     },
     // 添加节点
     handleAdd() {
-      const row = { id: "", name: "", edit: true };
-      this.pointData.push(row);
+      this.isEditPont = true;
+      this.editText = "添加节点";
+    },
+    handleAddPonit() {
+      const { pwd, name } = this.editPointForm;
+      let params = {
+        url: API.addArea,
+        method: "post",
+        params: {
+          pwd,
+          name,
+        },
+      };
+      if (this.editPonitData && this.editPonitData.id) {
+        params = {
+          url: `${API.addArea}/${this.editPonitData.id}`,
+          method: "put",
+          params: {
+            pwd,
+            name,
+          },
+        };
+      }
+      fetchService(params)
+        .then((res) => {
+          this.isEditPont = false;
+          this.editPonitData = null;
+          this.$message.success(res.msg || "成功");
+          this.getPoints(); // 更新列表数据
+        })
+        .catch((err) => {
+          this.$message.error(err.msg || "失败");
+        });
     },
   },
 };
