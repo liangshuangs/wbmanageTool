@@ -2,7 +2,7 @@
  * @Anthor: liangshuang15
  * @Description: 
  * @Date: 2022-10-11 11:50:18
- * @LastEditTime: 2022-10-15 14:01:40
+ * @LastEditTime: 2022-10-15 15:56:32
  * @FilePath: /wbmanageTool/manage-tool/src/view/Map/onlineMap.vue
 -->
 <template>
@@ -273,7 +273,6 @@ export default {
       let size = this.map.getSize();
       let x = size.width - 480;
       let y = 30;
-      let time = new Date();
       for (let baseStation of this.baseStationMap.values()) {
         if (baseStation.marker) {
           if (baseStation.longitude == 0 || baseStation.latitude == 0) {
@@ -282,7 +281,7 @@ export default {
             baseStation.customOverlay.setPosition(pt);
             x -= 80;
           }
-          if (baseStation.time.getTime() + 30000 < time.getTime()) {
+          if (!baseStation.latitude || !baseStation.longitude) {
             let icon = new window.BMapGL.Icon(
               "assets/base_station_red.png",
               new window.BMapGL.Size(35, 35)
