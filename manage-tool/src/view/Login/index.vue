@@ -2,7 +2,7 @@
  * @Anthor: liangshuang15
  * @Description: 
  * @Date: 2022-09-22 15:31:38
- * @LastEditTime: 2022-10-15 18:25:56
+ * @LastEditTime: 2022-10-16 21:20:05
  * @FilePath: /wbmanageTool/manage-tool/src/view/Login/index.vue
 -->
 <template>
@@ -75,15 +75,14 @@ export default {
 </script>
 <style scoped>
 .login-wrapper {
-  display: flex;
   height: 100vh;
-  align-content: center;
-  align-items: center;
-  justify-content: center;
-  justify-items: center;
+  min-width: 560px;
+  margin: 0 auto;
 }
 .login-content {
   display: flex;
   flex-direction: row;
+  justify-content: center;
+  align-items: center;
 }
 </style>
