@@ -2,7 +2,7 @@
  * @Anthor: liangshuang15
  * @Description: 
  * @Date: 2022-09-19 11:46:59
- * @LastEditTime: 2022-10-15 23:30:43
+ * @LastEditTime: 2022-10-16 21:12:40
  * @FilePath: /wbmanageTool/manage-tool/src/view/TuoPu/index.vue
 -->
 <template>
@@ -36,7 +36,7 @@
     </div>
     <!-- 网络拓扑控制 -->
     <el-dialog
-      width="40%"
+      :width="digWidth"
       title="网络拓扑控制"
       :visible="+showSettingModal === 1"
       @close="showSettingModal = ''"
@@ -56,7 +56,7 @@
     </el-dialog>
     <!-- 节点设置 -->
     <el-dialog
-      width="40%"
+    :width="digWidth"
       title="节点设置"
       :visible="+showSettingModal === 2"
       @close="showSettingModal = ''"
@@ -75,7 +75,7 @@
     </el-dialog>
     <!-- MESH设置 -->
     <el-dialog
-      width="40%"
+    :width="digWidth"
       title="MESH设置"
       :visible="+showSettingModal === 3"
       @close="showSettingModal = ''"
@@ -151,15 +151,18 @@ export default {
     Graph,
   },
   data() {
+    const clientWidth = document.documentElement.clientWidth;
+    const digWidth = clientWidth > 500 ? "40%" : '70%';
     return {
       loading: true,
+      digWidth,
       channel: "",
       frequency: "",
       tableData: [],
       tableColumns: [],
       watchData: [],
       timer: null,
-      formLabelWidth: "120px",
+      formLabelWidth: "100px",
       tuopuFrom: { num: "", name: "" },
       tuopuSetting: { num1: "", num2: "" },
       setMeshtting: { channel: '', frequency: '', is_all: '' },
@@ -365,9 +368,11 @@ export default {
 <style scoped>
   .wrapper {
     background-color: #fff;
+    width: 100%;
   }
 .title {
   display: flex;
+  flex-flow: wrap;
   padding-top: 10px;
 }
 .setting-select {

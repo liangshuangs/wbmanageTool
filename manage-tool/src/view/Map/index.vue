@@ -6,7 +6,7 @@
  * @FilePath: /wbmanageTool/manage-tool/src/view/Map/index.vue
 -->
 <template>
-  <div  v-loading="loading">
+  <div  v-loading="loading" class="map-container">
     <div class="info">
       <div class="info-item" @click="handleClearGuiji">清除轨迹</div>
       <div class="info-item" @click="handleTuoPu">{{ showTuoPu ? '隐藏拓扑': '显示拓扑' }}</div>
@@ -98,11 +98,14 @@ export default {
 };
 </script>
 <style scoped>
+  .map-container {
+    position: relative;
+  }
 .info {
   z-index: 999;
   margin-left: 10px;
-  position: fixed;
-  top: 70px;
+  position: absolute;
+  top: 20px;
   right: 10px;
   display: flex;
 }

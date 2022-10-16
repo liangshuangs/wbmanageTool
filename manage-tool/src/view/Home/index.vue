@@ -2,34 +2,46 @@
  * @Anthor: liangshuang15
  * @Description: 
  * @Date: 2022-09-19 12:21:38
- * @LastEditTime: 2022-10-15 23:30:23
+ * @LastEditTime: 2022-10-16 20:41:45
  * @FilePath: /wbmanageTool/manage-tool/src/view/Home/index.vue
 -->
 <template>
-  <div class="wrapper">
-    <div
-      v-for="(item, index) in tuopuData"
-      :key="index"
-      :index="index"
-      class="graph-item"
-    >
-      <div>{{ item.name }}</div>
-      <Graph :graphData="item.data" />
-      <el-table
-        size="small"
-        :border="true"
-        :data="item.data"
-        style="width: 95%"
-      >
-        <el-table-column prop="num" label="节点编号" width="80"> </el-table-column>
-        <el-table-column prop="name" label="节点名称"> </el-table-column>
-        <el-table-column prop="ip" label="节点IP"> </el-table-column>
-      </el-table>
+  <div class="box">
+    <div class="box-main">
+      <div class="wrapper">
+        <div
+          v-for="(item, index) in tuopuData"
+          :key="index"
+          :index="index"
+          class="graph-item"
+        >
+          <div>{{ item.name }}</div>
+          <Graph :graphData="item.data" />
+          <el-table
+            size="small"
+            :border="true"
+            :data="item.data"
+            style="width: 95%"
+          >
+            <el-table-column prop="num" label="节点编号" width="80">
+            </el-table-column>
+            <el-table-column prop="name" label="节点名称"> </el-table-column>
+            <el-table-column prop="ip" label="节点IP"> </el-table-column>
+          </el-table>
+        </div>
+      </div>
     </div>
     <div class="offline-point">
       <div class="offline-title">告警信息</div>
       <div class="info-wrapper">
-        <div class="info-item" v-for="(item, index) in offlinePointArray" :key="index" :index="index"> {{item}}</div>
+        <div
+          class="info-item"
+          v-for="(item, index) in offlinePointArray"
+          :key="index"
+          :index="index"
+        >
+          {{ item }}
+        </div>
       </div>
     </div>
   </div>
@@ -49,7 +61,7 @@ export default {
       topologyMap: new Map(), // 拓扑map
       timer: null,
       offlinePointObj: {},
-      offlinePointArray: []
+      offlinePointArray: [],
     };
   },
   mounted() {
@@ -98,7 +110,9 @@ export default {
             );
             if (!isNewTopologyHas) {
               let time = this.getNowFormatDate();
-              this.offlinePointArray.unshift(`${item.name}-${oldItem.num}-${oldItem.name}设备离线;离线时间：${time}`);
+              this.offlinePointArray.unshift(
+                `${item.name}-${oldItem.num}-${oldItem.name}设备离线;离线时间：${time}`
+              );
             }
           });
         }
@@ -107,40 +121,55 @@ export default {
       });
     },
     getNowFormatDate() {
-    var date = new Date();
-    var seperator1 = "-";
-    var seperator2 = ":";
-    var month = date.getMonth() + 1;
-    var strDate = date.getDate();
-    if (month >= 1 && month <= 9) {
+      var date = new Date();
+      var seperator1 = "-";
+      var seperator2 = ":";
+      var month = date.getMonth() + 1;
+      var strDate = date.getDate();
+      if (month >= 1 && month <= 9) {
         month = "0" + month;
-    }
-    if (strDate >= 0 && strDate <= 9) {
+      }
+      if (strDate >= 0 && strDate <= 9) {
         strDate = "0" + strDate;
-    }
-    var currentdate = date.getFullYear() + seperator1 + month + seperator1 + strDate
-            + " " + date.getHours() + seperator2 + date.getMinutes()
-            + seperator2 + date.getSeconds();
-    return currentdate;
-}
+      }
+      var currentdate =
+        date.getFullYear() +
+        seperator1 +
+        month +
+        seperator1 +
+        strDate +
+        " " +
+        date.getHours() +
+        seperator2 +
+        date.getMinutes() +
+        seperator2 +
+        date.getSeconds();
+      return currentdate;
+    },
   },
 };
 </script>
 <style scoped>
+.box {
+  width: 100%;
+}
+.box-main {
+  width: 100%;
+  background-color: #fff;
+}
 .wrapper {
   display: flex;
   flex-wrap: wrap;
-  justify-content: center;
   width: 100%;
+  background-color: #fff;
 }
 .graph-item {
-  width: calc(100% / 3);
+  width: 350px;
+  flex-flow: wrap;
   flex-direction: row;
   padding-top: 10px;
   padding-bottom: 10px;
   background-color: #fff;
-  /* border-bottom-left-radius: 10px;
-  border-bottom-right-radius: 10px; */
 }
 .offline-point {
   width: 100%;
@@ -155,8 +184,9 @@ export default {
 .offline-title {
   text-align: left;
   font-weight: 500;
+  width: 100%;
   font-size: 16px;
-  font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+  font-family: "Franklin Gothic Medium", "Arial Narrow", Arial, sans-serif;
   padding-left: 10px;
 }
 .info-wrapper {

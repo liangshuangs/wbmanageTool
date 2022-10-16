@@ -2,7 +2,7 @@
  * @Anthor: liangshuang15
  * @Description: 
  * @Date: 2022-09-20 15:30:06
- * @LastEditTime: 2022-10-15 23:29:46
+ * @LastEditTime: 2022-10-16 21:14:07
  * @FilePath: /wbmanageTool/manage-tool/src/components/Setting.vue
 -->
 <template>
@@ -10,7 +10,7 @@
     :visible="dialogFormVisible"
     custom-class="setting-dialog"
     @close="handleClose"
-    width="50%"
+    :width="digWidth"
   >
     <div slot="title" class="dialog-title">
       <el-button @click="showPointSetting = false" plain>用户设置</el-button>
@@ -92,7 +92,7 @@
     <el-dialog
       :title="editText"
       :visible.sync="isEditPont"
-      width="30%"
+      :width="digWidth"
       append-to-body
     >
       <el-form :model="editPointForm">
@@ -131,7 +131,10 @@ export default {
     },
   },
   data() {
+    const clientWidth = document.documentElement.clientWidth;
+    const digWidth = clientWidth > 500 ? "40%" : '90%';
     return {
+      digWidth,
       editText: "添加节点",
       isEditPont: false,
       pwd: "",
@@ -217,6 +220,8 @@ export default {
         .then((res) => {
           this.$message.success(res.msg || "删除结点成功");
           this.getPoints(); // 更新列表数据
+          this.dialogFormVisible = false;
+          window.location.reload();
         })
         .catch((err) => {
           this.$message.error(err.msg || "失败");
@@ -307,6 +312,8 @@ export default {
           this.editPonitData = null;
           this.$message.success(res.msg || "成功");
           this.getPoints(); // 更新列表数据
+          this.dialogFormVisible = false;
+          window.location.reload();
         })
         .catch((err) => {
           this.$message.error(err.msg || "失败");
