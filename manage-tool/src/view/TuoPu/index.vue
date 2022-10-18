@@ -334,7 +334,7 @@ export default {
       tuoPuList.map(t => {
         const result = gpsData.find(g => g.mac === t.mac);
         if (result) {
-          t.latLon = `经度:${result.long},纬度:${result.lat}`;
+          t.latLon = `经度:${result.long || 0},纬度:${result.lat || 0}`;
         }
       });
         this.tableData = tuoPuList || [];
