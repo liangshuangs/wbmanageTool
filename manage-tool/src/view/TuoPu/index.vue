@@ -2,7 +2,7 @@
  * @Anthor: liangshuang15
  * @Description: 
  * @Date: 2022-09-19 11:46:59
- * @LastEditTime: 2022-10-16 21:12:40
+ * @LastEditTime: 2022-10-18 11:18:20
  * @FilePath: /wbmanageTool/manage-tool/src/view/TuoPu/index.vue
 -->
 <template>
@@ -342,7 +342,7 @@ export default {
         let watchData = []; // 观察数据
         this.tableData.map((item) => {
           let watchColumn = { label: item.num + "", prop: item.mac }; // 处理列名
-          item.latLon = '经纬度';
+          // item.latLon = '经纬度';
           watchColumns.push(watchColumn);
           // 处理观察数据
           let watchDataItem = { num: item.num + "" }; // 观察数据

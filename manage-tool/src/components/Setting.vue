@@ -2,7 +2,7 @@
  * @Anthor: liangshuang15
  * @Description: 
  * @Date: 2022-09-20 15:30:06
- * @LastEditTime: 2022-10-16 21:14:07
+ * @LastEditTime: 2022-10-16 21:42:01
  * @FilePath: /wbmanageTool/manage-tool/src/components/Setting.vue
 -->
 <template>
@@ -97,7 +97,7 @@
     >
       <el-form :model="editPointForm">
         <el-form-item
-          label="区域名称"
+          label="分组名称"
           label-width="80px"
           :prop="editPointForm.name"
         >
@@ -135,7 +135,7 @@ export default {
     const digWidth = clientWidth > 500 ? "40%" : '90%';
     return {
       digWidth,
-      editText: "添加节点",
+      editText: "添加分组",
       isEditPont: false,
       pwd: "",
       dialogFormVisible: false,
@@ -284,7 +284,7 @@ export default {
     // 添加节点
     handleAdd() {
       this.isEditPont = true;
-      this.editText = "添加节点";
+      this.editText = "添加分组";
     },
     handleAddPonit() {
       const { pwd, name } = this.editPointForm;
