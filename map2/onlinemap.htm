@@ -35,13 +35,12 @@
     }
 
     .infoBoxContent .list {
-      min-width: 50px;
+      min-width: 70px;
       border-top: none;
       background: #fff;
-      min-height: 100px;
     }
 
-    .infoBoxContent .list:hover {
+    .infoBoxContent li:hover {
       color: rgba(27, 142, 236, 1);
     }
 
@@ -53,7 +52,7 @@
     }
 
     li + li {
-      border-bottom: 1px solid rgba(0, 0, 0, 0.4);
+      /* border-bottom: 1px solid rgba(0, 0, 0, 0.4); */
     }
 
     .infoBoxContent .list ul li {
@@ -62,6 +61,9 @@
 
     .infoBoxContent .list ul .last {
       border: none;
+    }
+    .left {
+      font-size: 16px;
     }
   </style>
   <script type="text/javascript"
@@ -82,10 +84,14 @@
   var map = new BMapGL.Map("allmap");
   map.centerAndZoom(new BMapGL.Point(116.4, 39.9), 16);
   map.enableScrollWheelZoom();
-  map.addControl(new BMapGL.NavigationControl());
   map.addControl(new BMapGL.ScaleControl());
   map.enableScrollWheelZoom(true);
   var navi3DCtrl = new BMapGL.NavigationControl3D();
+  var zoomCtrl = new BMapGL.ZoomControl({
+    anchor: BMAP_ANCHOR_TOP_RIGHT,
+    offset: new BMapGL.Size(10, 180),
+  });
+  map.addControl(zoomCtrl);
   map.addControl(navi3DCtrl);
 
   var gps = {};
